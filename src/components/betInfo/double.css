@@ -1,0 +1,256 @@
+.double-digit-container {
+  border-radius: 16px;
+  background: #fff;
+  max-width: 600px;
+  margin: auto;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  margin-top: 1rem;
+  padding: 8px 16px 8px;
+}
+
+.game-header-double {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.double-size {
+  font-size: 16px;
+}
+
+.title-double {
+  font-weight: 700;
+  font-size: 16px;
+}
+.triple-num {
+  font-size: 18px;
+}
+
+.win-tag {
+  background: #e3eafc;
+  color: #000;
+  font-size: 8px;
+  padding: 4px 8px;
+  margin-left: 8px;
+  border-radius: 8px;
+}
+
+.quick-guess-btn {
+  background: #eee;
+  border: 1px solid #ccc;
+  padding: 12px 14px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #575757;
+  font-size: 12px;
+  font-weight: 700;
+}
+  
+
+.ticket-info {
+  margin: 10px 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #000;
+}
+
+.original-price {
+  text-decoration: line-through;
+  /* color: #555; */
+  margin-right: 4px;
+}
+
+.discounted-price {
+  color: red;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.game-row-double {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.game-row:last-child {
+  border-bottom: none;
+}
+
+.label-container {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-direction: column;
+}
+.label-double-text {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    font-size: 16px;
+    
+}
+.label-container-circle {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+
+}
+.label {
+  font-weight: bold;
+  font-size: 16px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: #000;
+}
+
+.label-red {
+  border: 3px solid darkred;
+}
+
+.label-orange {
+  border: 3px solid orange;
+}
+
+.label-blue {
+  border: 3px solid royalblue;
+}
+
+.circle {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  font-size: 24px;
+  background: #f9f9f9;
+  border: 2px solid;
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.15);
+}
+
+.circle-red {
+  border: 1px solid darkred;
+  box-shadow: inset 0 0 8px lightgray;
+}
+
+.circle-orange {
+  border: 1px solid orange;
+  box-shadow: inset 0 0 8px lightgray;
+}
+
+.circle-blue {
+  border: 1px solid royalblue;
+  box-shadow: inset 0 0 8px lightgray;
+}
+
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-direction: column;
+}
+
+
+
+
+
+.add-button {
+  background: #84afff;
+  color: #fff;
+  width: 100%;
+  height: 40px;
+  /* padding: 16px 70px; */
+  border: none;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.game-row-double:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+
+
+/* Default ADD button */
+
+/* Enabled ADD button */
+.add-button.active-blue {
+  background-color: #007bff; /* Blue */
+  color: #fff;
+  cursor: pointer;
+}
+
+/* Hover effect when enabled */
+.add-button.active-blue:hover {
+  background-color: #0056b3;
+}
+
+/* Default control buttons (-/+) */
+.control-btn {
+  background-color: #f1f1f1;
+  color: #666;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: not-allowed;
+  transition: background-color 0.3s ease;
+}
+
+/* Enabled control buttons */
+.control-btn:enabled {
+  background-color: #ccc;
+  color: white;
+  cursor: pointer;
+}
+
+/* Hover effect for enabled control buttons */
+
+
+/* Input field */
+.count-input {
+  width: 60px;
+  padding: 6px;
+  text-align: center;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* Input inside circles */
+
+
+.circle-button-input:focus {
+  border-color: #007bff;
+}
+
+@media (max-width: 380px) {
+  .win-tag {
+    /* Adjust styles for screens 480px and below */
+    font-size: 8px; 
+  }
+  .ticket-info  {
+    font-size: 12px;
+  }
+  .discounted-price {
+    font-size: 12px;
+  }
+  .title-double {
+    font-size: 10px;
+  }
+  .double-size {
+  font-size: 12px;
+}
+}
+
+/* Add this to your double.css file */
+.game-row-double.disabled-row {
+  opacity: 0.6; /* Dims the row */
+  pointer-events: none; /* Prevents all mouse interactions */
+  cursor: not-allowed;
+}
+

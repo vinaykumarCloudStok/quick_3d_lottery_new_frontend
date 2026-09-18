@@ -1,0 +1,98 @@
+/* Modal Overlay */
+.cashout-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  pointer-events: none; /* Prevent blocking clicks when hidden */
+}
+
+.cashout-modal.show {
+  animation: fadeInZoomRotate 0.6s ease forwards;
+  pointer-events: auto;
+}
+
+.cashout-modal.hide {
+  animation: fadeOutZoomRotate 0.6s ease forwards;
+}
+
+/* Modal Content */
+.modal-content-container {
+  background: #ffffff;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  width: 90%;
+  max-width: 320px;
+  transform-origin: center;
+}
+
+/* Border color based on win/loss */
+.won-border {
+  border: 4px solid #4caf50; /* Green */
+}
+
+.lost-border {
+  border: 4px solid #f44336; /* Red */
+}
+
+/* Status Message */
+.status-message {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.won {
+  color: #4caf50;
+}
+
+.lost {
+  color: #f44336;
+}
+
+/* Sub-message */
+.sub-message {
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 1rem;
+}
+
+/* Amount Display */
+.amount-display {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #222;
+}
+
+/* Animations */
+@keyframes fadeInZoomRotate {
+  0% {
+    opacity: 0;
+    transform: scale(0.7) rotate(-10deg);
+  }
+  60% {
+    transform: scale(1.05) rotate(3deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+@keyframes fadeOutZoomRotate {
+  0% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.7) rotate(10deg);
+  }
+}

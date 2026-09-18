@@ -1,0 +1,329 @@
+.triple-digit-container {
+  padding: 8px 16px 8px;
+  background: #fff;
+  border-radius: 10px;
+  max-width: 550px;
+  margin: auto;
+  margin-top: 1rem;
+}
+.title-triple{
+  font-size: 18px;
+  font-weight: 700;
+  
+}
+.game-header-triple {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.win-tag {
+  background-color: #e6f0ff;
+  color: #000;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 5px;
+  margin-left: 8px;
+  font-size: 11px;
+}
+
+/* .quick-guess-btn {
+  background-color: #f2f2f2;
+  border: 1px solid #ccc;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+} */
+
+
+
+.original-price {
+  text-decoration: line-through;
+  margin-right: 5px;
+}
+
+
+.label-circle-row {
+  display: flex;
+  gap: 6px;
+  /* justify-content: space-between; */
+  align-items: center;
+  margin-top: 10px;
+}
+
+.game-row-triple {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.label-circle-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.label {
+  font-weight: bold;
+  font-size: 18px;
+  /* margin-bottom: 8px; */
+}
+
+.label-red {
+  color: darkred;
+}
+
+.label-orange {
+  color: orange;
+}
+
+.label-blue {
+  color: royalblue;
+}
+
+.circle {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 3px solid;
+  background-color: white;
+  font-size: 24px;
+  font-weight: bold;
+  color: gray;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.circle-red {
+  border-color: darkred;
+}
+
+.circle-orange {
+  border-color: orange;
+}
+
+.circle-blue {
+  border-color: royalblue;
+}
+
+.control-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.control-btn-triple {
+  width: 40px;
+  height: 40px;
+  font-size: 20px;
+  border: none;
+  background-color: #f1f1f1;
+  border-radius: 6px;
+  margin: 0 8px;
+}
+
+.count-input {
+  width: 80px;
+  height: 40px;
+  text-align: center;
+  font-size: 18px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-weight: 700;
+  color: #333;
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.box-btn, .add-btn {
+  background-color: #9cbcff;
+  border: none;
+  /* padding: 12px 30px; */
+  font-weight: bold;
+  color: white;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+
+
+
+
+
+
+.box-btn {
+  background-color: #ccc;
+  color: #666;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: not-allowed;
+  transition: background-color 0.3s ease;
+}
+
+.box-btn.active-blue {
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+}
+
+.box-btn.active-blue:hover {
+  background-color: #0056b3;
+}
+
+
+
+.low-balance-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent black background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Ensure it's on top of other content */
+}
+
+.low-balance-popup-content {
+  background-color: #fff;
+  padding: 25px;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  max-width: 350px;
+  width: 90%;
+}
+
+.low-balance-popup-content h3 {
+  color: #d32f2f; /* Red color for error messages */
+  margin-bottom: 15px;
+  font-size: 1.4em;
+}
+
+.low-balance-popup-content p {
+  margin-bottom: 20px;
+  font-size: 1.1em;
+  color: #333;
+}
+
+.low-balance-popup-content button {
+  background-color: #007bff; /* Blue button */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
+  transition: background-color 0.3s ease;
+}
+
+.low-balance-popup-content button:hover {
+  background-color: #0056b3;
+}
+
+/* Base styles for the Quick Guess button */
+.game-header button,
+.quick-guess-button { 
+  background-color: lightgray;
+  color: black;
+  padding: 10px 20px; /* Default padding for larger screens */
+  border: 1px solid #D9D9D9;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 700;
+  transition: background-color 0.3s ease, transform 0.1s ease; /* Include transform for animation */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Default shadow */
+}
+
+/* Hover and active states */
+.game-header button:hover,
+.quick-guess-button:hover {
+  background-color: #e0e0e0;
+}
+
+.game-header button:active,
+.quick-guess-button:active {
+  transform: scale(0.98); /* Slight press effect on click */
+}
+
+/* Animation Keyframes for the button */
+@keyframes buttonPress {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  50% {
+    transform: scale(0.95); /* Shrink slightly on press */
+    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+}
+
+/* Class to apply the animation to the button */
+.quick-guess-button.animating {
+  animation: buttonPress 0.2s ease-in-out forwards; /* A quick press animation */
+}
+
+@media (max-width: 480px) {
+  .game-header button,
+  .quick-guess-button {
+    padding: 12px;
+    font-size: 14px; 
+  }
+}
+
+/* For very small screens or when space is extremely limited */
+@media (max-width: 320px) {
+  .game-header button,
+  .quick-guess-button {
+    padding: 12px;
+    font-size: 12px;
+  }
+}
+
+
+@media (max-width: 380px) {
+  .win-tag {
+    /* Adjust styles for screens 480px and below */
+    font-size: 8px; 
+  }
+  .ticket-info  {
+    font-size: 12px;
+  }
+  .discounted-price {
+    font-size: 12px;
+  }
+  .title-double {
+    font-size: 12px;
+  }
+}
+
+/* Add this to your triple.css file */
+.triple-digit-container.disabled-row {
+  opacity: 0.6; /* Dims the entire container */
+  pointer-events: none; /* Disables all mouse events within the container */
+  cursor: not-allowed;
+}
+
+/* You may also want to style disabled buttons and inputs specifically */
+.triple-digit-container .disabled {
+  cursor: not-allowed;
+}
+
+

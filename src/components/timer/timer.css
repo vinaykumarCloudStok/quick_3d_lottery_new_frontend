@@ -1,0 +1,46 @@
+.progress-container {
+    width: 100%;
+    height: 10px;
+    background-color: #ddd;
+    border-radius: 5px;
+    overflow: hidden;
+  }
+  
+  .progress-bar {
+    height: 100%;
+    background-color: #4caf50; /* Green color for the bar */
+    width: 100%; /* Start full */
+    transition: width 0.1s linear;
+  }
+
+  .progress-bar {
+  background: #c8cfd9;
+  box-shadow: 0 1px 2px #00000040 inset;
+  gap: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 0.25rem;
+}
+ 
+.inside-p-bar {
+  background-color: hsl(var(--heroui-default-300) / 0.5);
+  border-radius: 0;
+  overflow: hidden;
+  height: 0.75rem;
+  z-index: 0;
+  position: relative;
+}
+ 
+.bar-color {
+  width: 100%; 
+  height: 100%;
+  background-color: #176be3;
+  transition-duration: 0.5s;
+  transition-property: transform;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 0;
+  transform: translateX(-100%); 
+}
+ 
+  

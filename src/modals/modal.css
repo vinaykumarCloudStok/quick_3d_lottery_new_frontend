@@ -1,0 +1,71 @@
+.betmodal-placed {
+  position: fixed;
+  background: rgba(0, 0, 0, 0.7);
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 0.5rem;
+  width: 300px;
+  height: 150px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+.check-icon {
+  background: #02b50a;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: white;
+}
+.rule-modal {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  --tw-shadow: var(--heroui-box-shadow-small);
+  --tw-shadow-colored: var(--heroui-box-shadow-small);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000),
+    var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+  --tw-bg-opacity: 1;
+  background-color: white;
+  border-radius: 0.5rem;
+  overflow-y: hidden;
+  max-width: var(--max-screen-width);
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  z-index: 50;
+  height: 600px;
+  position: relative;
+  padding-bottom: 1rem;
+}
+.rules-panel {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  flex: 1 1 0%;
+  display: flex;
+  overflow-y: auto;
+  color: var(--font-color-second);
+}
+.rules-panel-body {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  margin-top: 1rem;
+  padding: 0 1rem;
+  /* padding: 1rem; */
+}
+.ules-panel-body p {
+  font-size: 0.8rem;
+}
+.bet-placed-second {
+  color: "white";
+  text-transform: "capitalize";
+  font-size: "2rem";
+  text-align: "center";
+  color: #fff;
+}

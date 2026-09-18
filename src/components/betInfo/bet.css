@@ -1,0 +1,421 @@
+/* components/betInfo/bet.css */
+
+/* --- BetPanel Styles --- */
+.bottom-cart-wrapper {
+  position: sticky;
+  bottom: 0;
+  /* left: 0;  */
+  width: 480px; 
+  background-color: #fff;
+  padding: 10px;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 999; /* It's good to have a z-index for fixed elements */
+  box-sizing: border-box; /* Include padding in the width calculation */
+  margin-bottom: 0.3;
+}
+
+.bottom-cart-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0 auto;
+  padding: 5px 15px;
+  border-radius: 5px;
+  /* Max width for content inside the bar, optional but good for larger screens */
+  max-width: 460px; /* e.g., 480px - (10px padding * 2) */
+  /* margin-top: 1rem; */
+}
+
+.cart-info {
+  display: flex;
+  align-items: center;
+}
+
+.cart-icon .icon-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 10px;
+}
+
+.cart-img {
+  width: 40px;
+  height: 40px;
+}
+
+.cart-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.cart-price {
+  font-weight: bold;
+  color: #333;
+}
+
+.cart-strike {
+  text-decoration: line-through;
+  color: #888;
+  margin-right: 5px;
+}
+
+.cart-bids {
+  font-size: 0.8em;
+  color: #666;
+}
+
+.pay-now-button {
+  background: linear-gradient(90deg, #0047ec 0%, #00d0d7 100%);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1.1em;
+  font-weight: bold;
+  flex-shrink: 0;
+  transition: background 0.3s ease, filter 0.3s ease, opacity 0.3s ease;
+}
+
+.pay-now-button:disabled {
+  background: linear-gradient(90deg, #0047ec 0%, #00d0d7 100%);
+  cursor: not-allowed;
+  opacity: 0.5;              /* Make it look faded */
+  filter: grayscale(40%);    /* Optional: add grayscale to look more "disabled" */
+}
+
+/* --- Media Queries --- */
+
+/* For screens larger than or equal to 600px (or your desired breakpoint) */
+
+
+/* Adjustments for even smaller screens, if needed */
+@media (max-width: 480px) {
+  .bottom-cart-bar {
+    padding: 5px 10px; /* Reduce padding to save space */
+    margin-bottom: 1rem;
+  }
+
+  .cart-img {
+    width: 35px; /* Slightly smaller icon */
+    height: 35px;
+  }
+
+  .pay-now-button {
+    padding: 8px 15px; /* Slightly smaller button padding */
+    font-size: 1em; /* Smaller font size */
+  }
+}
+
+/* --- Modal Specific Styles (for BetModalContent) --- */
+/* These assume you are using a generic `Modal` component that provides the overlay and basic modal structure.
+   The styles below are for the content *inside* the modal. */
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  border-bottom: 1px solid #eee;
+  background-color: #f9f9f9;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.4em;
+  color: #333;
+}
+
+.delete-all-bets-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #ff4d4f; /* Red color for delete icon */
+  display: flex; /* To center the icon if it's the only content */
+  align-items: center;
+  justify-content: center;
+}
+
+.delete-all-bets-btn:hover {
+  opacity: 0.8;
+}
+
+.modal-body {
+  padding: 20px;
+  max-height: 70vh; /* Allow scrolling if many bets */
+  overflow-y: auto;
+}
+
+.no-data-container {
+  text-align: center;
+  padding: 30px;
+  color: #666;
+}
+
+.no-data-container img {
+  max-width: 150px; /* Adjust size of no-data image */
+  margin-bottom: 15px;
+}
+
+.bets-list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* Spacing between list and button */
+}
+
+.bets-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.bet-list-item-visual {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px dashed #eee; /* Subtle separator */
+}
+
+.bet-list-item-visual:last-child {
+  border-bottom: none; /* No border for the last item */
+}
+
+.bet-chips-group {
+  display: flex;
+  align-items: center;
+  gap: 5px; /* Spacing between chips */
+}
+
+/* Styles for BetChipDisplay (assuming it's a separate component) */
+/* You'll need to define `.bet-chip`, `.red`, `.orange`, `.blue` etc. in BetChipDisplay's own CSS or here if global */
+.bet-chip {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 30px; /* Example size */
+    height: 30px; /* Example size */
+    border-radius: 50%;
+    font-weight: bold;
+    color: white;
+    font-size: 0.9em;
+}
+
+.bet-chip.red { background-color: #ff4d4f; }
+.bet-chip.orange { background-color: #ffa500; }
+.bet-chip.blue { background-color: #1e90ff; }
+/* Add more colors if needed */
+
+
+.bet-quantity {
+  margin-left: 10px;
+  font-weight: bold;
+  color: #555;
+}
+
+.bet-amount-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.bet-amount-visual {
+  font-weight: bold;
+  color: #007bff; /* Example blue for amount */
+}
+
+.remove-bet-modal-btn {
+  background: none;
+  border: 1px solid #ff4d4f; /* Red border */
+  color: #ff4d4f;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  font-size: 1.2em; /* Size of the 'X' */
+  line-height: 1; /* Adjust vertical alignment */
+}
+
+.remove-bet-modal-btn:hover {
+  background-color: #ff4d4f;
+  color: white;
+}
+
+
+.modal-place-bet-btn {
+  background-color: #007bff; /* Example blue confirm button */
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1.1em;
+  font-weight: bold;
+  width: 100%;
+  margin-top: 15px; /* Space from bet list */
+}
+
+.modal-place-bet-btn:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+
+/* components/betInfo/BetChipDisplay.css */
+
+.bets-list {
+  display: flex;
+  gap: 1rem; /* Space between bet groups */
+}
+.bet-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%; /* Makes it a circle */
+  width: 30px; /* Adjust size as needed */
+  height: 30px; /* Adjust size as needed */
+  font-size: 14px;
+  font-weight: bold;
+  color: white; /* Default text color */
+  border: 1px solid #ccc; /* Default border */
+  margin-right: 4px; /* Space between chips */
+  position: relative;
+  overflow: hidden; /* Ensure content stays within circle */
+}
+
+/* Color classes for borders */
+.bet-chip.red { border-color: red; color: red; }
+.bet-chip.orange { border-color: orange; color: orange; }
+.bet-chip.blue { border-color: blue; color: blue; }
+
+/* Styles for the digit */
+.bet-chip-digit {
+  z-index: 1; /* Ensure digit is above any background */
+}
+
+/* Styles for the label (A, B, C) if desired inside the circle or as a small overlay */
+.bet-chip-label {
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-size: 8px; /* Smaller font for label */
+  font-weight: normal;
+  color: #555; /* Adjust label color if needed */
+  padding: 1px 2px;
+  border-bottom-left-radius: 4px;
+  background-color: rgba(255, 255, 255, 0.7);
+  z-index: 2; /* Ensure label is on top */
+}
+
+/* For your specific screenshot style (circles with red/orange/blue outlines, white fill, colored number) */
+.bet-chip {
+  background-color: white;
+  border-width: 2px; /* Thicker border for better visibility */
+}
+.bet-chip.red .bet-chip-digit { color: red; }
+.bet-chip.orange .bet-chip-digit { color: orange; }
+.bet-chip.blue .bet-chip-digit { color: blue; }
+
+.bet-chip-label {
+    /* Style the label as a smaller, filled circle at the top-right */
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 12px; /* Small circle size */
+    height: 12px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 8px;
+    color: white; /* Label text color */
+    background-color: #555; /* Default label background */
+    transform: translate(25%, -25%); /* Position it outside/partially outside */
+    z-index: 5;
+    box-shadow: 0 0 2px rgba(0,0,0,0.3);
+}
+
+/* Specific background colors for labels if needed */
+.bet-chip.red .bet-chip-label { background-color: red; }
+.bet-chip.orange .bet-chip-label { background-color: orange; }
+.bet-chip.blue .bet-chip-label { background-color: blue; }
+
+/* Styles for the "x1" or quantity display */
+.bet-quantity {
+  margin-left: 8px;
+  font-size: 14px;
+  font-weight: normal;
+  color: #555;
+}
+
+/* Container for a row of chips, to apply flexbox */
+.bet-chip-group {
+  display: flex;
+  align-items: center;
+  margin-right: 10px; /* Space between groups (e.g., between "1 2 3 x1" and "1 2 4 x1") */
+}
+
+/* For the delete button (trash icon) */
+.delete-all-bets-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin-left: auto; /* Push to the right */
+}
+
+.delete-all-bets-btn img {
+    width: 20px; /* Adjust size of trash icon */
+    height: 20px;
+    opacity: 0.7;
+}
+
+.delete-all-bets-btn:hover img {
+    opacity: 1;
+}
+
+.remove-bet-modal-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #888;
+    font-size: 18px;
+    margin-left: auto;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.remove-bet-modal-btn::after {
+    content: '×'; /* Close/delete icon */
+    font-size: 24px;
+    line-height: 1;
+}
+
+.remove-bet-modal-btn:hover {
+    color: #333;
+}
+
+
+
+
+/* Responsive adjustments for mobile devices */
+@media (max-width: 480px) {
+  .bottom-cart-wrapper {
+    padding: 8px;
+    width: 100%;
+  }
+
+  .bottom-cart-bar {
+    padding: 5px 10px;
+    max-width: 100%;
+    /* flex-direction: column; */
+    gap: 10px;
+    margin-bottom: 1rem;
+  }
+}
+

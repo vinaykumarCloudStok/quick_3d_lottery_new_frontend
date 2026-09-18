@@ -1,0 +1,418 @@
+/* Variables for colors and common styles */
+
+
+.game-container-single-digit {
+  background: #fff;
+  border-radius: 16px;
+  padding: 5px 10px;
+  box-shadow: 0 0 10px var(--shadow-light);
+  box-sizing: border-box;
+}
+
+/* Adjust margin for larger screens */
+@media (min-width: 768px) {
+  .game-container-single-digit {
+    max-width: 600px;
+    margin: 20px auto; /* Center the component */
+  }
+}
+
+.game-header {
+  display: flex;
+  justify-content: space-between;
+  /* flex-direction: column; */
+  align-items: flex-start;
+  gap: 10px;
+  /* padding-bottom: 12px; */
+  border-bottom: 1px solid var(--border-color-light);
+  /* margin-bottom: 16px; */
+}
+
+@media (min-width: 480px) {
+  .game-header {
+    flex-direction: row; /* Row layout on larger phones/small tablets */
+    justify-content: space-between;
+    align-items: center;
+    gap: 0;
+  }
+}
+
+.game-header h2 {
+  font-size: 20px;
+  font-weight: bold;
+  color: var(--text-color-dark);
+  margin: 0;
+  line-height: 1.2; /* Improve line spacing */
+}
+
+.win-tag {
+  background-color: var(--light-blue);
+  color: var(--primary-blue);
+  padding: 4px 10px;
+  border-radius: 9999px;
+  font-size: 8px;
+  font-weight: 600;
+  white-space: nowrap;
+  display: inline-block; /* Ensures padding and alignment work */
+  margin-left: 8px; /* Space from the main title */
+}
+
+.ticket-price {
+  margin-top: 5px; 
+  font-size: 18px;
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap; /* Allow wrapping on very small screens */
+  gap: 5px; /* Space between price components */
+}
+
+.strike {
+  text-decoration: line-through;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-color-medium); /* Softer color for struck price */
+}
+
+.discounted {
+  color: red;
+  font-weight: bold;
+  font-size: 16px; /* Slightly larger for the discounted price */
+}
+
+.ticket-info {
+  font-size: 14px;
+  color: var(--text-color-medium);
+}
+
+.game-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px; /* Space between stacked items */
+  margin: 8px 0;
+  padding-bottom: 8px;
+  /* border-bottom: 1px solid var(--border-color-light); */
+  border-bottom: 1px solid gainsboro;
+}
+
+/* For tablets and larger phones */
+@media (min-width: 480px) {
+  .game-row {
+    flex-direction: row; /* Row layout on wider screens */
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px; /* Adjust gap for row layout */
+  }
+}
+
+.game-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.game-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0; /* Prevent shrinking */
+}
+
+.label-circle {
+  border: 3px solid;
+  width: 30px; /* Slightly larger for better visibility */
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 20px; /* Larger font inside circle */
+  flex-shrink: 0;
+}
+
+.circle-button-input {
+  width: 50px; /* Slightly smaller to fit better on mobile */
+  height: 50px;
+  border-radius: 50%;
+  border: 3px solid;
+  background-color: white;
+  font-size: 22px; /* Adjusted font size */
+  font-weight: bold;
+  color: var(--text-color-medium);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s ease-in-out;
+  flex-shrink: 0;
+  -webkit-appearance: none; /* Remove default input styles on iOS */
+  -moz-appearance: textfield; /* Firefox */
+  color: rgb(62, 67, 73);
+}
+
+.circle-button-input:focus {
+  outline: none;
+  border-color: var(--primary-blue); /* Highlight on focus */
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+}
+
+
+
+
+
+@media (min-width: 480px) {
+  .game-info-label {
+    flex-direction: row; /* Row layout on wider screens */
+    justify-content: flex-end; /* Push to the right */
+    align-items: center;
+    gap: 15px;
+    width: auto; /* Revert width to auto */
+  }
+}
+
+.counter-box {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Closer buttons */
+  width: 100%; /* Take full width in stacked layout */
+  justify-content: center; /* Center buttons */
+}
+
+@media (min-width: 480px) {
+  .counter-box {
+    width: auto; /* Adjust width for row layout */
+    justify-content: flex-start; /* Align to start in row layout */
+  }
+}
+
+.counter-box button {
+  width: 40px; /* Slightly smaller tap target */
+  height: 40px;
+  border: none;
+  background: #f1f1f1;
+  color: gray;
+  font-size: 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  flex-shrink: 0;
+}
+
+.counter-box button:hover:not(:disabled) {
+  background-color: #d0d0d0;
+}
+
+.counter-box button:active:not(:disabled) {
+  background-color: #c0c0c0;
+  transform: scale(0.98);
+}
+
+.counter-box button.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+
+
+/* Hide spin buttons for number input */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+
+.add-btn {
+  padding: 10px 20px; /* More padding for a better tap target */
+  background-color: var(--light-gray); /* Default gray for disabled state */
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: not-allowed;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+  /* width: 100%; */
+}
+
+@media (min-width: 480px) {
+  .add-btn {
+    width: auto; /* Auto width in row layout */
+  }
+}
+
+.add-btn.active-blue {
+  /* background-color: var(--primary-blue); */
+  background-color: #007bff;
+  cursor: pointer;
+  box-shadow: 0 4px 8px var(--shadow-blue);
+}
+
+/* .add-btn.active-blue:hover {
+  background-color: var(--darker-blue);
+} */
+
+/* .add-btn:disabled {
+  opacity: 0.6;
+} */
+
+.row-error {
+  color: var(--red-color);
+  font-size: 13px;
+  margin-top: -8px; /* Pull it up closer to the elements */
+  margin-bottom: 0;
+  width: 100%; /* Ensure it takes full width */
+  text-align: center; /* Center the error message */
+}
+
+/* Color modifiers */
+.red {
+  /* border-color: var(--red-color);
+  color: var(--red-color); */
+  border: 1px solid darkred;
+  box-shadow: inset 0 0 8px lightgray;
+}
+
+.orange {
+  /* border-color: var(--orange-color);
+  color: var(--orange-color); */
+    border: 1px solid orange;
+  box-shadow: inset 0 0 8px lightgray;
+}
+
+.blue {
+  /* border-color: var(--dark-blue-color);
+  color: var(--dark-blue-color); */
+   border: 1px solid royalblue;
+  box-shadow: inset 0 0 8px lightgray;
+}
+
+/* General improvements for all interactive elements */
+button,
+input[type="button"],
+input[type="submit"],
+[role="button"] {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+
+/* single.css or a new popup.css */
+
+.low-balance-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent black background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Ensure it's on top of other content */
+}
+
+.low-balance-popup-content {
+  background-color: #fff;
+  padding: 25px;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  max-width: 350px;
+  width: 90%;
+}
+
+.low-balance-popup-content h3 {
+  color: #d32f2f; /* Red color for error messages */
+  margin-bottom: 15px;
+  font-size: 1.4em;
+}
+
+.low-balance-popup-content p {
+  margin-bottom: 20px;
+  font-size: 1.1em;
+  color: #333;
+}
+
+.low-balance-popup-content button {
+  background-color: #007bff; /* Blue button */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
+  transition: background-color 0.3s ease;
+}
+
+.low-balance-popup-content button:hover {
+  background-color: #0056b3;
+}
+
+
+
+@media (max-width: 380px) {
+  .win-tag {
+    /* Adjust styles for screens 480px and below */
+    font-size: 8px; 
+  }
+  .ticket-info  {
+    font-size: 12px;
+  }
+  .discounted-price {
+    font-size: 12px;
+  }
+  .title-double {
+    font-size: 10px;
+  }
+  .discounted {
+    font-size: 12px;
+  }
+  .strike {
+    font-size: 12px;
+  }
+}
+
+
+/* ------------------- */
+
+
+
+/* Color-specific border styles for the labels */
+.label-red.red {
+  border: 3px solid darkred;
+  color: black; /* Text color for readability */
+}
+
+.label-red.orange {
+  border: 3px solid orange;
+  color: black;
+}
+
+.label-red.blue {
+  border: 3px solid royalblue;
+  color: black;
+}
+
+
+
+/* Add this to your single.css file */
+.game-row.disabled-row {
+  opacity: 0.6; /* Dim the row to show it's disabled */
+  pointer-events: none; /* Disables all mouse events on the row */
+  cursor: not-allowed;
+}
+
+/* You can also style the buttons specifically when disabled */
+.game-row .disabled {
+  cursor: not-allowed;
+  background-color: #ddd;
+  color: #999;
+}
+
+.game-row.disabled-row input {
+  cursor: not-allowed;
+}
+
+
+
