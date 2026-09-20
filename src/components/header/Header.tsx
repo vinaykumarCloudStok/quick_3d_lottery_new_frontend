@@ -36,8 +36,6 @@ const Header: React.FC<HeaderProps> = ({
         return <Timer time={timers?.firstTime} />;
       case 1: 
         return <Timer time={timers?.secondTime} />;
-      case 2: 
-        return <Timer time={timers?.thirdTime} />;
       default:
         return null;
     }
@@ -46,14 +44,10 @@ const Header: React.FC<HeaderProps> = ({
 
   return (
     <>
-      {lobbyTab === 0 && <TimerBar time={timers?.firstTime} totalTime={90} />}
+      {lobbyTab === 0 && <TimerBar time={timers?.firstTime} totalTime={60} />}
       {lobbyTab === 1 && (
         <TimerBar time={timers?.secondTime} totalTime={180} />
       )}
-      {lobbyTab === 2 && (
-        <TimerBar time={timers?.thirdTime} totalTime={300} />
-      )}
-
       <div className="quick3d-container">
         <div className="quick3d-header">
           <div className="quick3d-title">
@@ -67,8 +61,6 @@ const Header: React.FC<HeaderProps> = ({
                       ? icon.imgLogo // For 101
                       : lobbyTab === 1
                       ? icon.img3sec // For 102
-                      : lobbyTab === 2
-                      ? icon.img5sec // For 103
                       : icon.imgLogo // Fallback, though usually one of the above
                   }
                   data-loaded="true"

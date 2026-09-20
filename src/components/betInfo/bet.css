@@ -3,7 +3,7 @@
 /* --- BetPanel Styles --- */
 .bottom-cart-wrapper {
   position: sticky;
-  bottom: 0;
+  bottom: 40px;
   /* left: 0;  */
   width: 480px; 
   background-color: #fff;

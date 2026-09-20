@@ -1,4 +1,4 @@
-import  { useEffect, useState, forwardRef } from "react";
+import  { useCallback, useEffect, useRef, useState, forwardRef } from "react";
 import { getCaller } from "../../utility/api";
 import "./history.css";
 import LoadingComponent from "../loader/LoadingComponent";
@@ -30,6 +30,7 @@ const History = forwardRef<HTMLDivElement, listProp>(
     const [gameHistory, setGameHistory] = useState<ApiGameHistoryItem[]>([]);
     const [gameLoading, setGameLoading] = useState(true);
     const [startIndex, setStartIndex] = useState(10);
+    const activeRequest = useRef<string | null>(null);
     const activeRoomId = timerTabData[lobbyTab]?.roomId;
     const newLobbyIds = lobbyIds[`lobbyData${id}`];
     const loadCount = 10;
@@ -42,18 +43,30 @@ const History = forwardRef<HTMLDivElement, listProp>(
     const handleList = (i: number) => {
       setBetListTab(i);
       setStartIndex(10);
-      if (activeRoomId !== undefined) {
-        getGameHistory(activeRoomId);
-      }
     };
 
-    const getGameHistory = async (roomId: number, limit = 10) => {
+    const getGameHistory = useCallback(async (roomId: number, limit = 10) => {
+      const requestKey = `${roomId}:${limit}`;
+      if (activeRequest.current === requestKey) return;
+
+      activeRequest.current = requestKey;
       setGameLoading(true);
-      const res = await getCaller(`lobby-details?lobby_id=${roomId}&limit=${limit}`);
-      const newData: ApiGameHistoryItem[] = res?.data || [];
-      setGameHistory(newData);
-      setGameLoading(false);
-    };
+      try {
+        const res = await getCaller(`lobby-details?lobby_id=${roomId}&limit=${limit}`);
+        const newData: ApiGameHistoryItem[] = (res?.data || []).map((item: any) => ({
+          ...item,
+          result: typeof item.result === "string" ? JSON.parse(item.result) : item.result,
+          created_at: item.created_at || item.bet_created_at,
+        }));
+        setGameHistory(newData);
+      } catch (error) {
+        console.error("Failed to fetch result history:", error);
+        setGameHistory([]);
+      } finally {
+        activeRequest.current = null;
+        setGameLoading(false);
+      }
+    }, []);
 
     const getResultDetails = (result: { a: number; b: number; c: number }) => {
       const winningNumber = (result.a + result.b + result.c) % 10;
@@ -83,7 +96,7 @@ const History = forwardRef<HTMLDivElement, listProp>(
       if (activeRoomId !== undefined && activeRoomId !== null) {
         getGameHistory(activeRoomId, loadCount);
       }
-    }, [activeRoomId, loadCount]);
+    }, [activeRoomId, loadCount, getGameHistory]);
 
     useEffect(() => {
       if (historyData.length > 0 && activeRoomId !== undefined && activeRoomId !== null) {
@@ -92,7 +105,7 @@ const History = forwardRef<HTMLDivElement, listProp>(
         }, 5000);
         return () => clearTimeout(timer);
       }
-    }, [historyData, activeRoomId, loadCount]);
+    }, [historyData, activeRoomId, loadCount, getGameHistory]);
 
     const loadMoreData = () => {
       const nextStartIndex = startIndex + loadCount;

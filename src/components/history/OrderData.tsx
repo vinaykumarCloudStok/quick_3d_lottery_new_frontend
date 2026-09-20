@@ -32,6 +32,15 @@ const getChipCircleClass = (category: string) => {
   }
 };
 
+const parseJson = <T,>(value: T | string, fallback: T): T => {
+  if (typeof value !== "string") return value;
+  try {
+    return JSON.parse(value) as T;
+  } catch {
+    return fallback;
+  }
+};
+
 const OrderData: React.FC<mylistProp> = ({ info, historyData, lobbyTab }) => {
   const [myBetLoading, setMyBetLoading] = useState(true);
   const [gameLoading, setGameLoading] = useState(false);
@@ -45,11 +54,9 @@ const OrderData: React.FC<mylistProp> = ({ info, historyData, lobbyTab }) => {
 
   const lobbyTypeText =
     activeRoomId === 101
-      ? "Quick 3D 1.5 min"
+      ? "Quick 3D 1 min"
       : activeRoomId === 102
       ? "Quick 3D 3 min"
-      : activeRoomId === 103
-      ? "Quick 3D 5 min"
       : "Quick 3D";
 
   // Modified toggleAccordion logic:
@@ -70,24 +77,35 @@ const OrderData: React.FC<mylistProp> = ({ info, historyData, lobbyTab }) => {
     setGameLoading(true);
     try {
       const res = await getCaller(
-        `bet-history/?user_id=${info.user_id}&operator_id=${info.operator_id}&limit=${limit}&lobby_id=${roomId}`
+        `bets/history/?user_id=${info.user_id}&operator_id=${info.operator_id}&limit=${limit}&lobby_id=${roomId}`
       );
-      const newBets = res?.data || [];
+      const newBets = (res?.data || []).filter(
+        (item: any) => Number(item.room_id) === roomId
+      );
 
-      const transformedBets = newBets.map((item: any) => ({
-        ...item,
-        user_bets: [
-          {
-            chip_string: item.chip,
-            btAmt: item.btAmt,
-            mult: item.mult,
-            winAmt: item.winAmt,
-            status: item.status,
-          },
-        ],
-        total: item.btAmt,
-        room_name: "Game Lobby",
-      }));
+      const transformedBets = newBets.map((item: any) => {
+        const rawBets = parseJson<any[]>(item.user_bets, []);
+        const settlements = parseJson<any[]>(item.settlement_user_bets, []);
+        const bets = rawBets.length > 0 ? rawBets : [{ chip: item.chip, amt: item.btAmt }];
+
+        return {
+          ...item,
+          result: parseJson(item.result, {}),
+          created_at: item.created_at || item.bet_created_at,
+          user_bets: bets.map((bet: any) => {
+            const settlement = settlements.find((entry: any) => entry.chip === bet.chip);
+            return {
+              chip_string: bet.chip || bet.chip_string || "",
+              btAmt: Number(bet.amt ?? bet.btAmt ?? 0),
+              mult: Number(settlement?.mult ?? bet.mult ?? 0),
+              winAmt: Number(settlement?.winAmt ?? bet.winAmt ?? 0),
+              status: settlement?.status ?? item.status,
+            };
+          }),
+          total: Number(item.total ?? item.bet_amount ?? item.btAmt ?? 0),
+          room_name: "Game Lobby",
+        };
+      });
 
       setMyBetData(transformedBets);
       // When new data is fetched, close any currently open accordion

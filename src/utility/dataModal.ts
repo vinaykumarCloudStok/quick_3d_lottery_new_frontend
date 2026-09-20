@@ -46,18 +46,13 @@ export interface Info {
 }
 export const lobbyTabData = [
     {
-        number: "1.5",
+        number: "1",
         text: "Minutes"
     },
     {
         number: "3",
         text: "Minutes"
     },
-    {
-        number: "5",
-        text: "Minutes"
-    },
-
 ]
 export interface ColorData {
     raw: string;
@@ -74,11 +69,11 @@ export interface InfoMessage {
         user_id: string;
         operator_id: string;
         balance: string; // or number if you prefer
-    };
+  };
 }
 
 export interface SettlementMessage {
-    eventName: "settlement";
+  eventName: "settlement";
     data: any; // Replace `any` with your settlement data type if available
 }
 
@@ -92,7 +87,7 @@ export const timerTabData = [
     {
         name: "Lottery",
         roomId: 101,
-        time: "1.5Min",
+        time: "1Min",
     },
     {
         name: "Lottery",
@@ -100,13 +95,6 @@ export const timerTabData = [
         roomId: 102,
 
     },
-    {
-        name: "Lottery",
-        time: "5Min",
-        roomId: 103,
-
-    },
-  
 ]
 
 export const formatTimeAsArray = (totalSeconds: number): [string, string, string] => {

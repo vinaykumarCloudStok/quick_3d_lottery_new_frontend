@@ -50,13 +50,6 @@ export const timerTabData: TimerTabItem[] = [
     roomId: 102,
 
   },
-  {
-    name: "Lottery",
-    time: "3Min",
-    roomId: 103,
-   
-  },
-
 ];
 
 
@@ -73,7 +66,6 @@ export const formatTimeAsArray = (_p0: Date, _p1: string, time: number | null): 
 };
 
 export const Lobbytabs: LobbyTab[] = [
-  { id: 0, label: "Lottery 90s", roomId: 101 },
+  { id: 0, label: "Lottery 60s", roomId: 101 },
   { id: 1, label: "Lottery 3Min", roomId: 102 },
-  { id: 2, label: "Lottery 5Min", roomId: 103 },
 ];

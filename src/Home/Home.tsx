@@ -571,7 +571,7 @@ const Home: React.FC<homeProps> = ({ shouldShowRotateImage }) => {
                 </div>
               </div>
 
-              {[101, 102, 103].map((id, index) =>
+              {[101, 102].map((id, index) =>
                 lobbyTab === index ? (
                   <Header
                     key={id}
