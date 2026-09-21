@@ -83,11 +83,10 @@ const SingleDigit: React.FC<SingleDigitProps> = ({
   isBettingDisabled,
   lobbyId,
   disabledRows,
-  onDisableRow,
 }) => {
   const [showLowBalancePopup, setShowLowBalancePopup] = useState(false);
   const [circleValues, setCircleValues] = useState<string[]>(["-", "-", "-"]);
-  const [displayValues, setDisplayValues] = useState<string[]>(["-", "-", "-"]);
+  const [displayValues, setDisplayValues] = useState<string[]>(["", "", ""]);
   const [errors, setErrors] = useState<string[]>(["", "", ""]);
   const [isButtonAnimating, setIsButtonAnimating] = useState(false);
 
@@ -123,12 +122,12 @@ const SingleDigit: React.FC<SingleDigitProps> = ({
     if (inputValue === "") {
       setDisplayValues((prev) => {
         const updated = [...prev];
-        updated[index] = "-";
+        updated[index] = "";
         return updated;
       });
       setCircleValues((prev) => {
         const updated = [...prev];
-        updated[index] = "-";
+        updated[index] = "";
         return updated;
       });
       counters[index].setValue(0);
@@ -170,12 +169,12 @@ const SingleDigit: React.FC<SingleDigitProps> = ({
     if (displayValues[index] === "") {
       setDisplayValues((prev) => {
         const updated = [...prev];
-        updated[index] = "-";
+        updated[index] = "";
         return updated;
       });
       setCircleValues((prev) => {
         const updated = [...prev];
-        updated[index] = "-";
+        updated[index] = "";
         return updated;
       });
     }
@@ -258,10 +257,8 @@ const SingleDigit: React.FC<SingleDigitProps> = ({
       selectedNumbers: digit,
       amount,
       rawLabels: [data[index].label],
+      lobbyId: String(lobbyId),
     });
-
-    // ⭐️ Tell Home to disable this row for this lobby
-    onDisableRow(lobbyId, data[index].label);
 
     // Reset inputs
     setCircleValues((prev) => {
@@ -324,7 +321,7 @@ const SingleDigit: React.FC<SingleDigitProps> = ({
   // Reset when round ends
   useEffect(() => {
     if (resetModal === "5" || resetModal === "resetAll" || resetModal === "gameFinished") {
-      setDisplayValues(["-", "-", "-"]);
+      setDisplayValues(["", "", ""]);
       setCircleValues(["-", "-", "-"]);
       setErrors(["", "", ""]);
       counters.forEach((c) => c.setValue(0));
@@ -354,7 +351,7 @@ const SingleDigit: React.FC<SingleDigitProps> = ({
             type="button"
             onClick={handleQuickGuess}
             className={`quick-guess-button ${isButtonAnimating ? "animating" : ""}`}
-            disabled={isBettingDisabled || disabledRows.length === data.length}
+            disabled={isBettingDisabled}
           >
             Quick Guess
           </button>
@@ -370,7 +367,7 @@ const SingleDigit: React.FC<SingleDigitProps> = ({
         const isValidDigit = /^\d$/.test(storedVal);
         const numericQuantity = Number(quantityValue) || 0;
 
-        const isRowDisabled = disabledRows.includes(item.label) || isBettingDisabled;
+        const isRowDisabled = isBettingDisabled;
         const isAddDisabled = !isValidDigit || numericQuantity <= 0 || isRowDisabled;
 
         return (

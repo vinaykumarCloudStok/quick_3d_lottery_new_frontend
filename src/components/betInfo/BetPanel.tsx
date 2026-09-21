@@ -3,11 +3,13 @@ import './bet.css';
 import { icon } from '../../utility/icon'; 
 import Modal from '../modal/Modal'; 
 import PaymentSuccessModal from '../../modals/PaymentSuccessModal'; 
+import BetModalContent from '../../modals/BetModalContent';
 import type { BetItem, Info } from '../../utility/dataModal'; 
 
 interface BetPanelProps {
   currentBets: BetItem[];
   onRemoveBet: (id: string) => void; 
+  onDeleteAllBets: () => void;
   onConfirmBets: (bets: BetItem[]) => void;
   userBalance: number;
   info?: Info | any;
@@ -17,7 +19,8 @@ interface BetPanelProps {
 
 const BetPanel: React.FC<BetPanelProps> = ({
   currentBets,
-  // onRemoveBet, // Commented out as it's not used in this specific logic flow
+  onRemoveBet,
+  onDeleteAllBets,
   onConfirmBets,
   userBalance,
   animationTargetRef, // Receive the new prop
@@ -27,6 +30,8 @@ const BetPanel: React.FC<BetPanelProps> = ({
   const [totalBetAmount, setTotalBetAmount] = useState(0);
   const [totalBids, setTotalBids] = useState(0);
   const [doNotShowPaymentSuccessAgain, setDoNotShowPaymentSuccessAgain] = useState(false);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [betsAwaitingConfirmation, setBetsAwaitingConfirmation] = useState<BetItem[] | null>(null);
 
   // Calculate total bet amount and number of bids whenever currentBets changes
   useEffect(() => {
@@ -46,6 +51,23 @@ const BetPanel: React.FC<BetPanelProps> = ({
       console.error("Failed to load 'doNotShowPaymentSuccessAgain' from localStorage:", error);
     }
   }, []);
+
+  useEffect(() => {
+    if (isBettingDisabled) {
+      setIsCartOpen(false);
+      setIsPaymentSuccessModalOpen(false);
+    }
+  }, [isBettingDisabled]);
+
+  const requestBetConfirmation = (bets: BetItem[]) => {
+    if (doNotShowPaymentSuccessAgain) {
+      onConfirmBets(bets);
+      return;
+    }
+
+    setBetsAwaitingConfirmation(bets);
+    setIsPaymentSuccessModalOpen(true);
+  };
 
   const handlePlaceBetButtonClick = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent the click from propagating to parent elements
@@ -71,25 +93,20 @@ const BetPanel: React.FC<BetPanelProps> = ({
       return;
     }
 
-    // If the "Do not show again" flag is set, bypass the modal and place the bet directly
-    if (doNotShowPaymentSuccessAgain) {
-      onConfirmBets(currentBets);
-    } else {
-      // Otherwise, open the PaymentSuccessModal
-      setIsPaymentSuccessModalOpen(true);
-    }
+    requestBetConfirmation(currentBets);
   };
 
   const handlePaymentSuccessOkClick = () => {
     setIsPaymentSuccessModalOpen(false); // Close the modal
-    onConfirmBets(currentBets); // Now, place the bet!
+    onConfirmBets(betsAwaitingConfirmation || currentBets); // Now, place the bet!
+    setBetsAwaitingConfirmation(null);
   };
 
   return (
     <>
       <div className="bottom-cart-wrapper">
         <div className="bottom-cart-bar">
-          <div className="cart-info">
+          <button className="cart-info cart-info-button" type="button" onClick={() => setIsCartOpen(true)}>
             <div className="cart-icon" ref={animationTargetRef}> {/* Attach the ref here! */}
               <div className="icon-wrapper">
                 <img
@@ -106,7 +123,7 @@ const BetPanel: React.FC<BetPanelProps> = ({
               </span>
               <span className="cart-bids">{totalBids} BIDS</span>
             </div>
-          </div>
+          </button>
 
           <button
             className="pay-now-button"
@@ -125,6 +142,23 @@ const BetPanel: React.FC<BetPanelProps> = ({
           <PaymentSuccessModal
             onOkClick={handlePaymentSuccessOkClick}
             showDoNotShowAgain={true}
+          />
+        </Modal>
+      )}
+
+      {isCartOpen && (
+        <Modal onClose={() => setIsCartOpen(false)} isOpen={true}>
+          <BetModalContent
+            currentBets={currentBets}
+            totalBetAmount={totalBetAmount}
+            userBalance={userBalance}
+            onRemoveBet={onRemoveBet}
+            onConfirmBets={(bets) => {
+              setIsCartOpen(false);
+              requestBetConfirmation(bets);
+            }}
+            onDeleteAllBets={onDeleteAllBets}
+            onClose={() => setIsCartOpen(false)}
           />
         </Modal>
       )}

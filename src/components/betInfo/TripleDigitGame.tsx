@@ -20,15 +20,13 @@ const TripleDigitGame: React.FC<TripleDigitGameProps> = ({
   resetModal,
   getBetPanelTargetPosition,
   isBettingDisabled,
-  onDisableRow,
-  disabledRows,
   lobbyId,
 }) => {
   const { value: inputValue, increase, decrease, onChange, setValue } =
     useCounterInput({ min: 0, max: 999 });
 
   const [circleValues, setCircleValues] = useState<string[]>(["-", "-", "-"]);
-  const [displayValues, setDisplayValues] = useState<string[]>(["-", "-", "-"]);
+  const [displayValues, setDisplayValues] = useState<string[]>(["", "", ""]);
   const [rowError, setRowError] = useState<string>("");
   const [showLowBalancePopup, setShowLowBalancePopup] = useState(false);
   const [isButtonAnimating, setIsButtonAnimating] = useState(false);
@@ -42,10 +40,8 @@ const TripleDigitGame: React.FC<TripleDigitGameProps> = ({
   const handleCloseLowBalancePopup = () => setShowLowBalancePopup(false);
 
   // Define a unique identifier for this row
-  const rowLabel = 'triple';
-  
   // Check if this specific row is disabled by the parent (Home.tsx)
-  const isRowDisabled = disabledRows.includes(rowLabel);
+  const isRowDisabled = false;
 
   // Combine global betting state with this row's disabled state
   const isControlDisabled = isBettingDisabled || isRowDisabled;
@@ -54,7 +50,7 @@ const TripleDigitGame: React.FC<TripleDigitGameProps> = ({
     // Reset inputs on a new game round or after the game finishes
     if (["3", "2", "1", "gameFinished"].includes(resetModal ?? "")) {
       setCircleValues(["-", "-", "-"]);
-      setDisplayValues(["-", "-", "-"]);
+      setDisplayValues(["", "", ""]);
       setValue(0);
       setRowError("");
     }
@@ -92,7 +88,6 @@ const TripleDigitGame: React.FC<TripleDigitGameProps> = ({
       if (filteredValue === "") {
         updatedCircles[index] = "-";
         setValue(0);
-        setInputToFocusAndSetCursor(index);
       } else if (/^\d$/.test(filteredValue)) {
         updatedCircles[index] = filteredValue;
         if ((Number(inputValue) || 0) === 0) {
@@ -110,7 +105,6 @@ const TripleDigitGame: React.FC<TripleDigitGameProps> = ({
     setDisplayValues((prevDisplay) => {
       const updatedDisplay = [...prevDisplay];
       if (updatedDisplay[index] === "-") updatedDisplay[index] = "";
-      setInputToFocusAndSetCursor(index);
       return updatedDisplay;
     });
   };
@@ -119,7 +113,7 @@ const TripleDigitGame: React.FC<TripleDigitGameProps> = ({
     if (displayValues[index] === "") {
       setDisplayValues((prevDisplay) => {
         const updatedDisplay = [...prevDisplay];
-        updatedDisplay[index] = "-";
+        updatedDisplay[index] = "";
         return updatedDisplay;
       });
       setCircleValues((prevCircles) => {
@@ -188,13 +182,11 @@ const TripleDigitGame: React.FC<TripleDigitGameProps> = ({
       selectedNumbers: selectedTripleNumber,
       amount: itemAmount,
       rawLabels: ["A", "B", "C"],
+      lobbyId: String(lobbyId),
     });
 
-    // Notify the parent to disable this specific row
-    onDisableRow(lobbyId, rowLabel);
-
     setCircleValues(["-", "-", "-"]);
-    setDisplayValues(["-", "-", "-"]);
+    setDisplayValues(["", "", ""]);
     setValue(0);
   };
   
@@ -205,7 +197,7 @@ const TripleDigitGame: React.FC<TripleDigitGameProps> = ({
     if (isControlDisabled) return;
     if (Number(inputValue) <= 1) {
       setCircleValues(["-", "-", "-"]);
-      setDisplayValues(["-", "-", "-"]);
+      setDisplayValues(["", "", ""]);
       setValue(0);
       setInputToFocusAndSetCursor(0);
     } else {

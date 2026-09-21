@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./order.css"; // Ensure this path is correct
 import { getCaller } from "../../utility/api"; // Ensure this path is correct
-import { timerTabData, type HistoryItem } from "../../utility/dataModal"; // Assuming timerTabData is correctly imported
+import { timerTabData, type HistoryItem, type BetItem } from "../../utility/dataModal"; // Assuming timerTabData is correctly imported
 import { icon } from "../../utility/icon"; // Assuming 'icon' object has a 'noData' property
 
 interface mylistProp {
@@ -9,6 +9,7 @@ interface mylistProp {
   info: Record<string, any>;
   lobbyTab: number;
   newLobbyIds: any;
+  placedBets: BetItem[];
 }
 
 const parseChipData = (chipString: string) => {
@@ -41,7 +42,7 @@ const parseJson = <T,>(value: T | string, fallback: T): T => {
   }
 };
 
-const OrderData: React.FC<mylistProp> = ({ info, historyData, lobbyTab }) => {
+const OrderData: React.FC<mylistProp> = ({ info, historyData, lobbyTab, placedBets }) => {
   const [myBetLoading, setMyBetLoading] = useState(true);
   const [gameLoading, setGameLoading] = useState(false);
   const [myBetData, setMyBetData] = useState<any[]>([]);
@@ -54,10 +55,10 @@ const OrderData: React.FC<mylistProp> = ({ info, historyData, lobbyTab }) => {
 
   const lobbyTypeText =
     activeRoomId === 101
-      ? "Quick 3D 1 min"
+      ? "Instant Lottery 1 min"
       : activeRoomId === 102
-      ? "Quick 3D 3 min"
-      : "Quick 3D";
+      ? "Instant Lottery 3 min"
+      : "Instant Lottery";
 
   // Modified toggleAccordion logic:
   // It now stores only the *one* key of the open accordion, or null if none are open.
@@ -112,7 +113,7 @@ const OrderData: React.FC<mylistProp> = ({ info, historyData, lobbyTab }) => {
       setOpenAccordionKey(null);
     } catch (error) {
       console.error("Failed to fetch bet data:", error);
-      setMyBetData([]);
+      // Keep the last successful response visible during temporary API failures.
     } finally {
       setGameLoading(false);
       setMyBetLoading(false);
@@ -127,6 +128,18 @@ const OrderData: React.FC<mylistProp> = ({ info, historyData, lobbyTab }) => {
     if (info.user_id && info.operator_id && activeRoomId !== undefined) {
       fetchBetData(currentLoadCount, activeRoomId);
     }
+  }, [currentLoadCount, info.user_id, info.operator_id, activeRoomId]);
+
+  useEffect(() => {
+    if (!info.user_id || !info.operator_id || activeRoomId === undefined) {
+      return;
+    }
+
+    const refreshTimer = window.setInterval(() => {
+      fetchBetData(currentLoadCount, activeRoomId);
+    }, 5000);
+
+    return () => window.clearInterval(refreshTimer);
   }, [currentLoadCount, info.user_id, info.operator_id, activeRoomId]);
 
   useEffect(() => {
@@ -149,7 +162,7 @@ const OrderData: React.FC<mylistProp> = ({ info, historyData, lobbyTab }) => {
     activeRoomId,
   ]);
 
-  if (myBetLoading) {
+  if (myBetLoading && placedBets.length === 0) {
     return (
       <div className="loader-container-order">
         <div className="loader-order"></div>
@@ -158,11 +171,11 @@ const OrderData: React.FC<mylistProp> = ({ info, historyData, lobbyTab }) => {
     );
   }
 
-  if (myBetData.length === 0 && !myBetLoading) {
+  if (myBetData.length === 0 && !myBetLoading && placedBets.length === 0) {
     return (
       <div className="order-data-container no-data">
         <img src={icon.noData} alt="No Data" className="no-data-image" />
-        <p>No bet data available for this lobby.</p>
+        <p>No bets placed</p>
       </div>
     );
   }
@@ -178,6 +191,17 @@ const OrderData: React.FC<mylistProp> = ({ info, historyData, lobbyTab }) => {
 
   return (
     <div className="order-data-container">
+      {placedBets.length > 0 && (
+        <div className="current-placed-bets">
+          <strong>Current Round Bets</strong>
+          {placedBets.map((bet) => (
+            <div className="current-placed-bet" key={bet.id}>
+              <span>{bet.type.toUpperCase()} {String(bet.selectedNumbers)}</span>
+              <span>{bet.amount.toFixed(2)}</span>
+            </div>
+          ))}
+        </div>
+      )}
       <div className="current-draw-header">
         <div className="" style={{ display: "flex", justifyContent: "space-between" }}>
           <div className="current-lobby-min">

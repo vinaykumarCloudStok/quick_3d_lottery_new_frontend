@@ -1,6 +1,6 @@
 // components/betInfo/BetModalContent.tsx
 import React from 'react';
-import { AiOutlineDelete } from 'react-icons/ai';
+import { AiOutlineClose, AiOutlineDelete } from 'react-icons/ai';
 import type { BetItem } from '../utility/dataModal';
 import BetChipDisplay from '../components/betInfo/BetChipDisplay';
 import { icon } from '../utility/icon';
@@ -12,6 +12,7 @@ interface BetModalContentProps {
   onRemoveBet: (id: string) => void;
   onConfirmBets: (bets: BetItem[]) => void;
   onDeleteAllBets: () => void; // Prop for deleting all bets
+  onClose: () => void;
 }
 
 const BetModalContent: React.FC<BetModalContentProps> = ({
@@ -21,6 +22,7 @@ const BetModalContent: React.FC<BetModalContentProps> = ({
   onRemoveBet,
   onConfirmBets,
   onDeleteAllBets,
+  onClose,
 }) => {
 
   // Function to render the chips as JSX
@@ -45,8 +47,7 @@ const BetModalContent: React.FC<BetModalContentProps> = ({
             }
           />
         ))}
-        {/* Display quantity next to the chips */}
-        <span className="bet-quantity">x1</span> {/* Assuming quantity is always 1 per BetItem for now */}
+        <span className="bet-quantity">x1</span>
       </div>
     );
   };
@@ -71,10 +72,18 @@ const BetModalContent: React.FC<BetModalContentProps> = ({
   return (
     <>
       <div className="modal-header">
-        <h2>My Numbers</h2>
-        <button className="delete-all-bets-btn" onClick={onDeleteAllBets}>
-          <AiOutlineDelete style={{ fontSize: '24px' }} />
-        </button>
+        <div>
+          <span className="modal-kicker">BET SLIP</span>
+          <h2>My Numbers</h2>
+        </div>
+        <div className="modal-header-actions">
+          <button className="delete-all-bets-btn" type="button" onClick={onDeleteAllBets} aria-label="Delete all bets">
+            <AiOutlineDelete />
+          </button>
+          <button className="close-modal-btn" type="button" onClick={onClose} aria-label="Close bet slip">
+            <AiOutlineClose />
+          </button>
+        </div>
       </div>
       <div className="modal-body">
         {currentBets.length === 0 ? (
@@ -88,13 +97,13 @@ const BetModalContent: React.FC<BetModalContentProps> = ({
               {currentBets.map((bet) => (
                 <li key={bet.id} className="bet-list-item-visual">
                   <div className="bet-display-group">
+                    <span className="bet-type-label">{bet.type} bet</span>
                     {renderBetChips(bet)}
                   </div>
-                  <div className="bet-amount-actions"> {/* Group amount and delete button */}
-                     {/* <span className="bet-amount-visual">₹{bet.amount.toFixed(2)}</span> Display individual bet amount if needed */}
-                    <button className="remove-bet-modal-btn" onClick={() => onRemoveBet(bet.id)}>
-                      {/* You might want an icon here, or just a simple 'X' */}
-                      &times; {/* Example: simple 'X' for removal */}
+                  <div className="bet-amount-actions">
+                    <span className="bet-amount-visual">{bet.amount.toFixed(2)}</span>
+                    <button className="remove-bet-modal-btn" type="button" onClick={() => onRemoveBet(bet.id)} aria-label="Remove bet">
+                      <AiOutlineDelete />
                     </button>
                   </div>
                 </li>

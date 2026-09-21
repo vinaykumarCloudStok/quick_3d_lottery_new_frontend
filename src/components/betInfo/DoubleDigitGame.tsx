@@ -33,13 +33,12 @@ const GameItem: React.FC<GameItemProps> = ({
   isBettingDisabled,
   lobbyId,
   disabledRows,
-  onDisableRow,
 }) => {
   const { value: inputValue, increase, decrease, onChange, setValue } =
     useCounterInput({ min: 0, max: 999 });
 
   const [circleValues, setCircleValues] = useState<string[]>(labels.map(() => "-"));
-  const [displayValues, setDisplayValues] = useState<string[]>(labels.map(() => "-"));
+  const [displayValues, setDisplayValues] = useState<string[]>(labels.map(() => ""));
   const [rowError, setRowError] = useState<string>("");
 
   const inputRefs = useRef<Array<HTMLInputElement | null>>([]);
@@ -52,14 +51,14 @@ const GameItem: React.FC<GameItemProps> = ({
   useEffect(() => {
     if (["3", "2", "1", "gameFinished"].includes(resetModal ?? "")) {
       setCircleValues(labels.map(() => "-"));
-      setDisplayValues(labels.map(() => "-"));
+      setDisplayValues(labels.map(() => ""));
       setValue(0);
       setRowError("");
     }
   }, [resetModal, labels, setValue]);
 
   useEffect(() => {
-    if (onQuickGuessTriggered && !disabledRows.includes(rowLabel)) {
+    if (onQuickGuessTriggered) {
       const newValues = labels.map(
         () => Math.floor(Math.random() * 10).toString()
       );
@@ -67,8 +66,6 @@ const GameItem: React.FC<GameItemProps> = ({
       setCircleValues(newValues);
       setValue(1);
       setRowError("");
-      onQuickGuessHandled();
-    } else if (onQuickGuessTriggered && disabledRows.includes(rowLabel)) {
       onQuickGuessHandled();
     }
   }, [onQuickGuessTriggered, disabledRows, rowLabel, labels, setValue, onQuickGuessHandled]);
@@ -135,9 +132,8 @@ const GameItem: React.FC<GameItemProps> = ({
     setCircleValues((prev) => {
       const updated = [...prev];
       if (filteredValue === "") {
-        updated[index] = "-";
+        updated[index] = "";
         setValue(0);
-        setShouldSetCursorPosition(index);
       } else if (/^\d$/.test(filteredValue)) {
         updated[index] = filteredValue;
         if ((Number(inputValue) || 0) === 0) {
@@ -158,19 +154,18 @@ const GameItem: React.FC<GameItemProps> = ({
       if (updated[index] === "-") updated[index] = "";
       return updated;
     });
-    setShouldSetCursorPosition(index);
   };
 
   const handleDisplayBlur = (index: number) => {
     if (displayValues[index] === "") {
       setDisplayValues((prev) => {
         const updated = [...prev];
-        updated[index] = "-";
+        updated[index] = "";
         return updated;
       });
       setCircleValues((prev) => {
         const updated = [...prev];
-        updated[index] = "-";
+        updated[index] = "";
         return updated;
       });
     }
@@ -207,17 +202,16 @@ const GameItem: React.FC<GameItemProps> = ({
       selectedNumbers: selectedDoubleNumber,
       amount: itemAmount,
       rawLabels: labels,
+      lobbyId: String(lobbyId),
     });
 
-    onDisableRow(lobbyId, rowLabel);
-
     setCircleValues(labels.map(() => "-"));
-    setDisplayValues(labels.map(() => "-"));
+    setDisplayValues(labels.map(() => ""));
     setValue(0);
   };
 
-  const isRowGloballyDisabled = disabledRows.includes(rowLabel);
-  const isControlDisabled = isBettingDisabled || isRowGloballyDisabled;
+  const isRowGloballyDisabled = false;
+  const isControlDisabled = isBettingDisabled;
   const isAddButtonDisabled =
     !isValidInputCombination || Number(inputValue) <= 0 || isControlDisabled;
 
@@ -225,7 +219,7 @@ const GameItem: React.FC<GameItemProps> = ({
     if (isControlDisabled) return; // Add this check
     if (Number(inputValue) <= 1) {
       setCircleValues(labels.map(() => "-"));
-      setDisplayValues(labels.map(() => "-"));
+      setDisplayValues(labels.map(() => ""));
       setValue(0);
       setShouldSetCursorPosition(0);
     } else {

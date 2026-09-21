@@ -55,7 +55,7 @@ const Header: React.FC<HeaderProps> = ({
               <div className="image-wrapper">
                 <img
                   className="quick3d-image"
-                  alt="Quick 3D"
+                  alt="Instant Lottery"
                   src={
                     lobbyTab === 0
                       ? icon.imgLogo // For 101
@@ -67,7 +67,7 @@ const Header: React.FC<HeaderProps> = ({
                 />
               </div>
               <div className="quick3d-text">
-                <div className="quick3d-title">Quick 3D</div>
+                <div className="quick3d-title">Instant Lottery</div>
                 <div className="quick3d-subtitle">
                   <p className="bold-text-last">Current draw</p>
                   <span className="bold-text">{lobby[`parsedData${id}`]}</span>

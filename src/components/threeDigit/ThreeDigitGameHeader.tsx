@@ -70,7 +70,7 @@ const ThreeDigitGameHeader: React.FC<ThreeDigitGameHeaderProps> = ({
               <IoIosArrowBack style={{ fontSize: "28px", marginTop: "4px" }} />
             </div>
           </div>
-          <div className="game-three">Quick 3D lottery</div>
+          <div className="game-three">Instant Lottery</div>
           <div className="sound-icon" onClick={toggleSound}>
             {/* Conditionally render volume icon based on 'sound' state */}
             {sound ? <BiSolidVolumeFull /> : <BiVolumeMute />}

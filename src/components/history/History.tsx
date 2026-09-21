@@ -3,7 +3,7 @@ import { getCaller } from "../../utility/api";
 import "./history.css";
 import LoadingComponent from "../loader/LoadingComponent";
 import OrderData from "./OrderData";
-import { timerTabData, type HistoryItem } from "../../utility/dataModal";
+import { timerTabData, type HistoryItem, type BetItem } from "../../utility/dataModal";
 
 interface listProp {
   lobbyTab: number;
@@ -12,6 +12,7 @@ interface listProp {
   info: Record<string, any>;
   id: number;
   lobbyIds: Record<string, any>;
+  placedBets: BetItem[];
 }
 
 
@@ -26,7 +27,7 @@ interface ApiGameHistoryItem {
 }
 
 const History = forwardRef<HTMLDivElement, listProp>(
-  ({ lobbyTab, info, historyData, id, lobbyIds }, ref) => {
+  ({ lobbyTab, info, historyData, id, lobbyIds, placedBets }, ref) => {
     const [gameHistory, setGameHistory] = useState<ApiGameHistoryItem[]>([]);
     const [gameLoading, setGameLoading] = useState(true);
     const [startIndex, setStartIndex] = useState(10);
@@ -37,6 +38,7 @@ const History = forwardRef<HTMLDivElement, listProp>(
     const tabListData = [
       { name: "Result History" },
       { name: "My Order" },
+      { name: "Current Bets" },
     ];
     const [betListTab, setBetListTab] = useState<number>(0);
 
@@ -174,7 +176,7 @@ const History = forwardRef<HTMLDivElement, listProp>(
                     );
                   })
                 ) : (
-                  <p className="no-data-message">No game history available.</p>
+                  <div className="history-empty-state">No results available</div>
                 )}
               </div>
 
@@ -193,7 +195,28 @@ const History = forwardRef<HTMLDivElement, listProp>(
             historyData={historyData}
             info={info}
             lobbyTab={lobbyTab}
+            placedBets={placedBets.filter((bet) => String(bet.lobbyId) === String(activeRoomId))}
           />
+        )}
+
+        {betListTab === 2 && (
+          <div className="bet-table-container current-bets-tab">
+            {placedBets.filter((bet) => String(bet.lobbyId) === String(activeRoomId)).length > 0 ? (
+              placedBets
+                .filter((bet) => String(bet.lobbyId) === String(activeRoomId))
+                .map((bet) => (
+                  <div className="table-row-container" key={bet.id}>
+                    <div className="table-row-body">
+                      <div className="row-one">{bet.type.toUpperCase()}</div>
+                      <div className="created-name">{String(bet.selectedNumbers)}</div>
+                      <div className="row-two">{bet.amount.toFixed(2)}</div>
+                    </div>
+                  </div>
+                ))
+            ) : (
+              <div className="history-empty-state">No bets placed</div>
+            )}
+          </div>
         )}
       </div>
     );

@@ -92,6 +92,7 @@ const Home: React.FC<homeProps> = ({ shouldShowRotateImage }) => {
     103: false,
   });
   const [currentBets, setCurrentBets] = useState<BetItem[]>([]);
+  const [placedBets, setPlacedBets] = useState<BetItem[]>([]);
   const userBalance = info?.balance || 0;
 
   const [disabledRowsByLobby, setDisabledRowsByLobby] = useState<{
@@ -146,6 +147,12 @@ const Home: React.FC<homeProps> = ({ shouldShowRotateImage }) => {
       prevBets.filter((bet) => bet.id !== idToRemove)
     );
   };
+
+  const clearUnplacedBetsForLobby = useCallback((roomId: string | number) => {
+    setCurrentBets((prevBets) =>
+      prevBets.filter((bet) => String(bet.lobbyId) !== String(roomId))
+    );
+  }, []);
 
   const convertBetItemToChip = (
     bet: BetItem
@@ -221,6 +228,8 @@ const Home: React.FC<homeProps> = ({ shouldShowRotateImage }) => {
 
       console.log("Sending bet payload:", betPayload);
       socket.emit("bet", betPayload);
+
+      setPlacedBets((prevBets) => [...prevBets, ...betsToConfirm]);
 
       setBetModal(true);
       setTimeout(() => setBetModal(false), 3000);
@@ -316,6 +325,7 @@ const Home: React.FC<homeProps> = ({ shouldShowRotateImage }) => {
           setLoadModal(false);
           setDotLoaderModals((prev) => ({ ...prev, [parsedRoomId]: true }));
           resetTimer(parsedRoomId);
+          clearUnplacedBetsForLobby(parsedRoomId);
         } else {
           setDotLoaderModals((prev) => ({ ...prev, [parsedRoomId]: false }));
           updateTimers(parsedRoomId, lobbyIdWithDash, parsedLobbyData, lobbyId);
@@ -395,6 +405,9 @@ const Home: React.FC<homeProps> = ({ shouldShowRotateImage }) => {
           ...prev,
           [roomId]: [],
         }));
+        setPlacedBets((prevBets) =>
+          prevBets.filter((bet) => String(bet.lobbyId) !== String(roomId))
+        );
 
         // Update the result state for the specific room
         switch (roomId) {
@@ -432,7 +445,7 @@ const Home: React.FC<homeProps> = ({ shouldShowRotateImage }) => {
       socketInstance.off("message", handleError);
       socketInstance.disconnect();
     };
-  }, [queryParams.id, queryParams.game_id, resetTimer]);
+  }, [queryParams.id, queryParams.game_id, resetTimer, clearUnplacedBetsForLobby]);
 
   const handleLobbyTab = (i: number) => {
     setLobbyTab(i);
@@ -457,13 +470,14 @@ const Home: React.FC<homeProps> = ({ shouldShowRotateImage }) => {
       return () => clearTimeout(timer);
     }
     if (resetModal === "5") {
+      clearUnplacedBetsForLobby([101, 102, 103][lobbyTab]);
       setBetClose(true);
       const closeBetCloseTimer = setTimeout(() => {
         setBetClose(false);
       }, 3000);
       return () => clearTimeout(closeBetCloseTimer);
     }
-  }, [resetModal, sound]);
+  }, [resetModal, sound, lobbyTab, clearUnplacedBetsForLobby]);
 
   const currentRoundResult = useMemo(() => {
     switch (lobbyTab) {
@@ -635,11 +649,13 @@ const Home: React.FC<homeProps> = ({ shouldShowRotateImage }) => {
               id={[101, 102, 103][lobbyTab]}
               lobbyIds={lobbyIds}
               lobbyTab={lobbyTab}
+              placedBets={placedBets}
             />
           </div>
           <BetPanel
             currentBets={currentBets}
             onRemoveBet={handleRemoveBet}
+            onDeleteAllBets={() => setCurrentBets([])}
             onConfirmBets={handleConfirmAllBets}
             userBalance={userBalance}
             animationTargetRef={betPanelCartIconRef}

@@ -226,6 +226,23 @@
   flex-direction: column;
 }
 
+.history-empty-state {
+  min-height: 250px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  box-sizing: border-box;
+  color: #7b879c;
+  font-size: 0.95rem;
+  font-weight: 600;
+  background: #fbfcfe;
+}
+
+.current-bets-tab {
+  min-height: 250px;
+}
+
 .bet-table-container-body {
   display: flex;
   flex-direction: column;
