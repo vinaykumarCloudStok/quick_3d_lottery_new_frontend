@@ -56,13 +56,8 @@ const Header: React.FC<HeaderProps> = ({
                 <img
                   className="quick3d-image"
                   alt="Instant Lottery"
-                  src={
-                    lobbyTab === 0
-                      ? icon.imgLogo // For 101
-                      : lobbyTab === 1
-                      ? icon.img3sec // For 102
-                      : icon.imgLogo // Fallback, though usually one of the above
-                  }
+                  src={icon.imgLogo}
+                  
                   data-loaded="true"
                 />
               </div>

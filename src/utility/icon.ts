@@ -5,7 +5,7 @@ import bookImage from '../assets/svgviewer-png-output.png'
 import iconEmpty from '../assets/no-data.png';
 import shopCart from '../assets/shop-car.webp';
 import walletIcon from '../assets/wallet.webp';
-import imgLogo from '../assets/quick1.5.webp';
+import imgLogo from '../assets/logo.png';
 import img3sec from '../assets/quick3.webp';
 import img5sec from '../assets/quick5.webp';
 import noData from '../assets/no-data.webp';

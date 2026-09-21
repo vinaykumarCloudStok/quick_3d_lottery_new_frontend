@@ -36,9 +36,9 @@ const History = forwardRef<HTMLDivElement, listProp>(
     const newLobbyIds = lobbyIds[`lobbyData${id}`];
     const loadCount = 10;
     const tabListData = [
-      { name: "Result History" },
-      { name: "My Order" },
       { name: "Current Bets" },
+      { name: "My Order" },
+      { name: "Result History" },
     ];
     const [betListTab, setBetListTab] = useState<number>(0);
 
@@ -134,7 +134,7 @@ const History = forwardRef<HTMLDivElement, listProp>(
           </div>
         </div>
 
-        {betListTab === 0 && (
+        {betListTab === 2 && (
           <div className="bet-table-container">
             <div className="bet-table-container-body">
               <div className="bet-table-result">
@@ -199,7 +199,7 @@ const History = forwardRef<HTMLDivElement, listProp>(
           />
         )}
 
-        {betListTab === 2 && (
+        {betListTab === 0 && (
           <div className="bet-table-container current-bets-tab">
             {placedBets.filter((bet) => String(bet.lobbyId) === String(activeRoomId)).length > 0 ? (
               placedBets
