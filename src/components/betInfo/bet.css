@@ -396,6 +396,57 @@
   font-size: 0.9rem;
 }
 
+.bet-edit-number-input {
+  width: 76px;
+  height: 34px;
+  box-sizing: border-box;
+  border: 1px solid #9bb6ef;
+  border-radius: 8px;
+  padding: 0 9px;
+  color: #17233d;
+  background: #f5f8ff;
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  outline: none;
+}
+
+.bet-edit-number-input:focus {
+  border-color: #315bd6;
+  box-shadow: 0 0 0 3px rgba(49, 91, 214, 0.14);
+}
+
+.bet-edit-btn,
+.bet-edit-save-btn,
+.bet-edit-cancel-btn {
+  border: 0;
+  border-radius: 6px;
+  padding: 6px 8px;
+  cursor: pointer;
+  font-size: 0.68rem;
+  font-weight: 800;
+}
+
+.bet-edit-btn,
+.bet-edit-save-btn {
+  color: #315bd6;
+  background: #eaf0ff;
+}
+
+.bet-edit-cancel-btn {
+  color: #68758a;
+  background: #eef1f5;
+}
+
+.bet-edit-btn:hover,
+.bet-edit-save-btn:hover {
+  background: #dbe6ff;
+}
+
+.bet-edit-cancel-btn:hover {
+  background: #e1e6ed;
+}
+
 .remove-bet-modal-btn {
   background: none;
   border: 1px solid #ff4d4f; /* Red border */

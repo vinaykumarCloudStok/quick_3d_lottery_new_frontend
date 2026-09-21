@@ -201,15 +201,29 @@ const History = forwardRef<HTMLDivElement, listProp>(
 
         {betListTab === 0 && (
           <div className="bet-table-container current-bets-tab">
+            <div className="current-bets-header">
+              <span>BET TYPE</span>
+              <span>SELECTED NUMBER</span>
+              <span>AMOUNT</span>
+            </div>
             {placedBets.filter((bet) => String(bet.lobbyId) === String(activeRoomId)).length > 0 ? (
               placedBets
                 .filter((bet) => String(bet.lobbyId) === String(activeRoomId))
                 .map((bet) => (
                   <div className="table-row-container" key={bet.id}>
                     <div className="table-row-body">
-                      <div className="row-one">{bet.type.toUpperCase()}</div>
-                      <div className="created-name">{String(bet.selectedNumbers)}</div>
-                      <div className="row-two">{bet.amount.toFixed(2)}</div>
+                      <div className="row-one current-bet-type">{bet.type.toUpperCase()} DIGIT</div>
+                      <div className="created-name current-bet-selection">
+                        {(typeof bet.selectedNumbers === "string"
+                          ? bet.selectedNumbers.split("")
+                          : bet.selectedNumbers
+                        ).map((number, index) => (
+                          <span key={`${bet.id}-${index}`}>
+                            {bet.rawLabels?.[index] || String.fromCharCode(65 + index)} = {number}
+                          </span>
+                        ))}
+                      </div>
+                      <div className="row-two current-bet-amount">{bet.amount.toFixed(2)}</div>
                     </div>
                   </div>
                 ))

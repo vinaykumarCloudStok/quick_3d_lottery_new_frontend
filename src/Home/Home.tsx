@@ -93,6 +93,8 @@ const Home: React.FC<homeProps> = ({ shouldShowRotateImage }) => {
   });
   const [currentBets, setCurrentBets] = useState<BetItem[]>([]);
   const [placedBets, setPlacedBets] = useState<BetItem[]>([]);
+  const placedBetIdsRef = useRef<Set<string>>(new Set());
+  const placedBetKeysRef = useRef<Set<string>>(new Set());
   const userBalance = info?.balance || 0;
 
   const [disabledRowsByLobby, setDisabledRowsByLobby] = useState<{
@@ -148,10 +150,24 @@ const Home: React.FC<homeProps> = ({ shouldShowRotateImage }) => {
     );
   };
 
+  const handleUpdateBet = (idToUpdate: string, selectedNumbers: string) => {
+    setCurrentBets((prevBets) =>
+      prevBets.map((bet) =>
+        bet.id === idToUpdate ? { ...bet, selectedNumbers } : bet
+      )
+    );
+  };
+
   const clearUnplacedBetsForLobby = useCallback((roomId: string | number) => {
     setCurrentBets((prevBets) =>
       prevBets.filter((bet) => String(bet.lobbyId) !== String(roomId))
     );
+    const roomPrefix = `${String(roomId)}:`;
+    placedBetKeysRef.current.forEach((key) => {
+      if (key.startsWith(roomPrefix)) {
+        placedBetKeysRef.current.delete(key);
+      }
+    });
   }, []);
 
   const convertBetItemToChip = (
@@ -209,6 +225,30 @@ const Home: React.FC<homeProps> = ({ shouldShowRotateImage }) => {
 
   const handleConfirmAllBets = (betsToConfirm: BetItem[]) => {
     if (socket && betsToConfirm.length > 0) {
+      const selectedLobbyId = String([101, 102, 103][lobbyTab]);
+      const getBetKey = (bet: BetItem) =>
+        `${selectedLobbyId}:${bet.type}:${String(bet.selectedNumbers)}:${(bet.rawLabels || []).join(",")}`;
+      const batchKeys = new Set<string>();
+      const newBets = betsToConfirm.filter(
+        (bet) => {
+          const key = getBetKey(bet);
+          if (
+            placedBetIdsRef.current.has(bet.id) ||
+            placedBetKeysRef.current.has(key) ||
+            batchKeys.has(key)
+          ) {
+            return false;
+          }
+          batchKeys.add(key);
+          return true;
+        }
+      );
+
+      if (newBets.length === 0) {
+        setCurrentBets([]);
+        return;
+      }
+
       const lobbyIdKeys = ["lobbyData101", "lobbyData102", "lobbyData103"];
       const selectedLobbyIdKey = lobbyIdKeys[lobbyTab];
       const currentLobbyId = lobbyIds[selectedLobbyIdKey];
@@ -219,7 +259,7 @@ const Home: React.FC<homeProps> = ({ shouldShowRotateImage }) => {
         return;
       }
 
-      const formattedBets = betsToConfirm.map(convertBetItemToChip);
+      const formattedBets = newBets.map(convertBetItemToChip);
 
       const betPayload: BetPayload = {
         lobbyId: currentLobbyId,
@@ -229,7 +269,9 @@ const Home: React.FC<homeProps> = ({ shouldShowRotateImage }) => {
       console.log("Sending bet payload:", betPayload);
       socket.emit("bet", betPayload);
 
-      setPlacedBets((prevBets) => [...prevBets, ...betsToConfirm]);
+      newBets.forEach((bet) => placedBetIdsRef.current.add(bet.id));
+      newBets.forEach((bet) => placedBetKeysRef.current.add(getBetKey(bet)));
+      setPlacedBets((prevBets) => [...prevBets, ...newBets]);
 
       setBetModal(true);
       setTimeout(() => setBetModal(false), 3000);
@@ -251,6 +293,20 @@ const Home: React.FC<homeProps> = ({ shouldShowRotateImage }) => {
       }
     }
   };
+
+  const hasDuplicateBets = useCallback((bets: BetItem[]) => {
+    const lobbyId = String([101, 102, 103][lobbyTab]);
+    const keys = new Set<string>();
+
+    return bets.some((bet) => {
+      const key = `${lobbyId}:${bet.type}:${String(bet.selectedNumbers)}:${(bet.rawLabels || []).join(",")}`;
+      if (keys.has(key) || placedBetKeysRef.current.has(key)) {
+        return true;
+      }
+      keys.add(key);
+      return false;
+    });
+  }, [lobbyTab]);
 
   useEffect(() => {
     if (!queryParams.id || !queryParams.game_id) {
@@ -408,6 +464,7 @@ const Home: React.FC<homeProps> = ({ shouldShowRotateImage }) => {
         setPlacedBets((prevBets) =>
           prevBets.filter((bet) => String(bet.lobbyId) !== String(roomId))
         );
+        clearUnplacedBetsForLobby(roomId);
 
         // Update the result state for the specific room
         switch (roomId) {
@@ -655,11 +712,13 @@ const Home: React.FC<homeProps> = ({ shouldShowRotateImage }) => {
           <BetPanel
             currentBets={currentBets}
             onRemoveBet={handleRemoveBet}
+            onUpdateBet={handleUpdateBet}
             onDeleteAllBets={() => setCurrentBets([])}
             onConfirmBets={handleConfirmAllBets}
             userBalance={userBalance}
             animationTargetRef={betPanelCartIconRef}
             isBettingDisabled={isBettingDisabled}
+            hasDuplicateBets={hasDuplicateBets}
           />
         </div>
       )}

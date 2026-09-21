@@ -243,6 +243,73 @@
   min-height: 250px;
 }
 
+.current-bets-header,
+.current-bets-tab .table-row-body {
+  display: grid;
+  grid-template-columns: 1.05fr 1.7fr 0.75fr;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  box-sizing: border-box;
+}
+
+.current-bets-header {
+  color: #7b879c;
+  background: #f6f8fc;
+  border-bottom: 1px solid #e8edf5;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+}
+
+.current-bets-tab .table-row-container {
+  border-bottom: 1px solid #edf0f5;
+}
+
+.current-bets-tab .table-row-body {
+  min-height: 54px;
+  padding-top: 9px;
+  padding-bottom: 9px;
+}
+
+.current-bet-type {
+  color: #315bd6;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.current-bet-selection {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  color: #17233d;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.current-bet-amount {
+  color: #17233d;
+  font-size: 0.82rem;
+  font-weight: 800;
+  text-align: right;
+}
+
+@media (max-width: 480px) {
+  .current-bets-header,
+  .current-bets-tab .table-row-body {
+    grid-template-columns: 0.95fr 1.5fr 0.7fr;
+    gap: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .current-bet-type,
+  .current-bet-selection,
+  .current-bet-amount {
+    font-size: 0.68rem;
+  }
+}
+
 .bet-table-container-body {
   display: flex;
   flex-direction: column;

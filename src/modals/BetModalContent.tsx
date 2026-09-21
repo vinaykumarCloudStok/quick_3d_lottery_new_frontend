@@ -10,6 +10,7 @@ interface BetModalContentProps {
   totalBetAmount: number;
   userBalance: number;
   onRemoveBet: (id: string) => void;
+  onUpdateBet: (id: string, selectedNumbers: string) => void;
   onConfirmBets: (bets: BetItem[]) => void;
   onDeleteAllBets: () => void; // Prop for deleting all bets
   onClose: () => void;
@@ -20,10 +21,13 @@ const BetModalContent: React.FC<BetModalContentProps> = ({
   totalBetAmount,
   userBalance,
   onRemoveBet,
+  onUpdateBet,
   onConfirmBets,
   onDeleteAllBets,
   onClose,
 }) => {
+  const [editingBetId, setEditingBetId] = React.useState<string | null>(null);
+  const [editingNumber, setEditingNumber] = React.useState("");
 
   // Function to render the chips as JSX
   const renderBetChips = (bet: BetItem): React.ReactNode => {
@@ -98,10 +102,51 @@ const BetModalContent: React.FC<BetModalContentProps> = ({
                 <li key={bet.id} className="bet-list-item-visual">
                   <div className="bet-display-group">
                     <span className="bet-type-label">{bet.type} bet</span>
-                    {renderBetChips(bet)}
+                    {editingBetId === bet.id ? (
+                      <input
+                        className="bet-edit-number-input"
+                        value={editingNumber}
+                        maxLength={bet.type === "single" ? 1 : bet.type === "double" ? 2 : 3}
+                        inputMode="numeric"
+                        onChange={(event) => setEditingNumber(event.target.value.replace(/\D/g, ""))}
+                        aria-label={`Edit ${bet.type} number`}
+                        autoFocus
+                      />
+                    ) : renderBetChips(bet)}
                   </div>
                   <div className="bet-amount-actions">
                     <span className="bet-amount-visual">{bet.amount.toFixed(2)}</span>
+                    {editingBetId === bet.id ? (
+                      <>
+                        <button
+                          className="bet-edit-save-btn"
+                          type="button"
+                          onClick={() => {
+                            const expectedLength = bet.type === "single" ? 1 : bet.type === "double" ? 2 : 3;
+                            if (editingNumber.length === expectedLength) {
+                              onUpdateBet(bet.id, editingNumber);
+                              setEditingBetId(null);
+                            }
+                          }}
+                        >
+                          Save
+                        </button>
+                        <button className="bet-edit-cancel-btn" type="button" onClick={() => setEditingBetId(null)}>
+                          Cancel
+                        </button>
+                      </>
+                    ) : (
+                      <button
+                        className="bet-edit-btn"
+                        type="button"
+                        onClick={() => {
+                          setEditingBetId(bet.id);
+                          setEditingNumber(String(bet.selectedNumbers));
+                        }}
+                      >
+                        Edit
+                      </button>
+                    )}
                     <button className="remove-bet-modal-btn" type="button" onClick={() => onRemoveBet(bet.id)} aria-label="Remove bet">
                       <AiOutlineDelete />
                     </button>

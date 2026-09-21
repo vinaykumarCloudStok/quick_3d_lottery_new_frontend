@@ -4,27 +4,32 @@ import { icon } from '../../utility/icon';
 import Modal from '../modal/Modal'; 
 import PaymentSuccessModal from '../../modals/PaymentSuccessModal'; 
 import BetModalContent from '../../modals/BetModalContent';
+import ErrorModal from '../../modals/ErrorModal';
 import type { BetItem, Info } from '../../utility/dataModal'; 
 
 interface BetPanelProps {
   currentBets: BetItem[];
   onRemoveBet: (id: string) => void; 
+  onUpdateBet: (id: string, selectedNumbers: string) => void;
   onDeleteAllBets: () => void;
   onConfirmBets: (bets: BetItem[]) => void;
   userBalance: number;
   info?: Info | any;
   animationTargetRef?: React.RefObject<HTMLDivElement | null>;
   isBettingDisabled: boolean; // Add this prop
+  hasDuplicateBets: (bets: BetItem[]) => boolean;
 }
 
 const BetPanel: React.FC<BetPanelProps> = ({
   currentBets,
   onRemoveBet,
+  onUpdateBet,
   onDeleteAllBets,
   onConfirmBets,
   userBalance,
   animationTargetRef, // Receive the new prop
   isBettingDisabled, // Destructure the new prop
+  hasDuplicateBets,
 }) => {
   const [isPaymentSuccessModalOpen, setIsPaymentSuccessModalOpen] = useState(false);
   const [totalBetAmount, setTotalBetAmount] = useState(0);
@@ -32,6 +37,7 @@ const BetPanel: React.FC<BetPanelProps> = ({
   const [doNotShowPaymentSuccessAgain, setDoNotShowPaymentSuccessAgain] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [betsAwaitingConfirmation, setBetsAwaitingConfirmation] = useState<BetItem[] | null>(null);
+  const [duplicateBetError, setDuplicateBetError] = useState(false);
 
   // Calculate total bet amount and number of bids whenever currentBets changes
   useEffect(() => {
@@ -60,6 +66,13 @@ const BetPanel: React.FC<BetPanelProps> = ({
   }, [isBettingDisabled]);
 
   const requestBetConfirmation = (bets: BetItem[]) => {
+    if (hasDuplicateBets(bets)) {
+      setIsCartOpen(false);
+      setBetsAwaitingConfirmation(null);
+      setDuplicateBetError(true);
+      return;
+    }
+
     if (doNotShowPaymentSuccessAgain) {
       onConfirmBets(bets);
       return;
@@ -146,6 +159,14 @@ const BetPanel: React.FC<BetPanelProps> = ({
         </Modal>
       )}
 
+      {duplicateBetError && (
+        <ErrorModal
+          error={{ message: 'Duplicate number bets are not allowed in this round.' }}
+          errorModal={duplicateBetError}
+          setErrorModal={setDuplicateBetError}
+        />
+      )}
+
       {isCartOpen && (
         <Modal onClose={() => setIsCartOpen(false)} isOpen={true}>
           <BetModalContent
@@ -153,6 +174,7 @@ const BetPanel: React.FC<BetPanelProps> = ({
             totalBetAmount={totalBetAmount}
             userBalance={userBalance}
             onRemoveBet={onRemoveBet}
+            onUpdateBet={onUpdateBet}
             onConfirmBets={(bets) => {
               setIsCartOpen(false);
               requestBetConfirmation(bets);
