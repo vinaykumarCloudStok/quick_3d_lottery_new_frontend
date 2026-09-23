@@ -1,5 +1,75 @@
+/* components/modal/modal.css — shared modal shell */
 
+.modal-overlay-open {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0;
+  background: rgba(13, 22, 41, 0.58);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+  animation: modal-overlay-in 180ms ease-out;
+}
 
+/* Base shell stays neutral so modals that bring their own chrome
+   (e.g. PaymentSuccessModal) are not wrapped in a stray white box. */
+.modal-content-open {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 480px;
+  max-height: 100%;
+  min-height: 0;
+  background: transparent;
+}
 
+/* Sheet variant: used by the bet slip */
+.modal-content-open.modal-sheet {
+  max-height: 88vh;
+  max-height: 88dvh;
+  overflow: hidden;
+  border-radius: 20px 20px 0 0;
+  background: #fff;
+  box-shadow: 0 -12px 40px rgba(13, 22, 41, 0.28);
+  animation: modal-sheet-in 240ms cubic-bezier(0.22, 0.8, 0.3, 1);
+}
 
+@media (min-width: 560px) {
+  .modal-overlay-open {
+    align-items: center;
+    padding: 1rem;
+  }
 
+  .modal-content-open.modal-sheet {
+    max-width: 460px;
+    max-height: 86vh;
+    border-radius: 16px;
+    box-shadow: 0 20px 48px rgba(13, 22, 41, 0.3);
+    animation: modal-dialog-in 200ms cubic-bezier(0.22, 0.8, 0.3, 1);
+  }
+}
+
+@keyframes modal-overlay-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modal-sheet-in {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+@keyframes modal-dialog-in {
+  from { opacity: 0; transform: scale(0.97); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modal-overlay-open,
+  .modal-content-open.modal-sheet {
+    animation: none;
+  }
+}

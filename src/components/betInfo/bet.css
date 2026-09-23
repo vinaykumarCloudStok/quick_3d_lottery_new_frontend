@@ -1,631 +1,698 @@
 /* components/betInfo/bet.css */
 
-/* --- BetPanel Styles --- */
+:root {
+  --bet-ink: #17233d;
+  --bet-muted: #6b7890;
+  --bet-line: #e6ebf3;
+  --bet-surface-alt: #f5f8fd;
+  --bet-brand: #176be3;
+  --bet-brand-soft: #e9f0ff;
+  --bet-danger: #e5484d;
+  --bet-danger-soft: #fdecec;
+}
+
+/* ============================================================
+   1. Bottom bet bar — pinned to the bottom of the game area
+   ============================================================ */
+
+/* The bar is the last child of the scrolling .game-container, so sticky
+   pins it to the bottom of the app's usable area — which App.tsx sizes with
+   --viewport-height. Viewport-fixed would sit under the mobile browser chrome. */
 .bottom-cart-wrapper {
   position: sticky;
   bottom: 40px;
-  width: min(480px, 100%);
-  background: rgba(255, 255, 255, 0.96);
-  padding: 12px;
-  border-top: 1px solid #e8edf5;
-  box-shadow: 0 -8px 24px rgba(23, 42, 74, 0.08);
+  margin-top: auto;
+  width: 100%;
   z-index: 999;
   box-sizing: border-box;
+  padding: 10px 12px calc(10px + env(safe-area-inset-bottom, 0px));
+  background: rgba(255, 255, 255, 0.97);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid var(--bet-line);
+  box-shadow: 0 -8px 26px rgba(19, 38, 72, 0.1);
 }
 
 .bottom-cart-bar {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
-  margin: 0 auto;
-  padding: 8px 10px;
-  border-radius: 12px;
-  background: #f7f9fc;
-  max-width: 460px;
+  gap: 10px;
 }
 
-.cart-info {
-  display: flex;
-  align-items: center;
-}
 .cart-info-button {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  padding: 5px 10px 5px 6px;
   border: 0;
-  background: transparent;
-  padding: 0;
-  cursor: pointer;
+  border-radius: 12px;
+  background: var(--bet-surface-alt);
   text-align: left;
-  border-radius: 10px;
-  transition: background 160ms ease, opacity 160ms ease;
+  cursor: pointer;
+  transition: background 160ms ease;
 }
+
 .cart-info-button:hover {
   background: #eef3fb;
-  opacity: 1;
 }
-.cart-info-button::after {
-  content: "View / Edit";
-  margin-left: 10px;
-  color: #315bd6;
-  font-size: 0.75rem;
-  font-weight: 600;
+
+.cart-info-button:focus-visible,
+.pay-now-button:focus-visible,
+.bet-slip-icon-btn:focus-visible,
+.bet-slip-clear-btn:focus-visible,
+.bet-slip-confirm-btn:focus-visible,
+.bet-slip-empty-btn:focus-visible,
+.bet-edit-number-input:focus-visible {
+  outline: 2px solid var(--bet-brand);
+  outline-offset: 2px;
 }
 
 .cart-icon .icon-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-right: 10px;
+  position: relative;
+  display: grid;
+  place-items: center;
 }
 
 .cart-img {
-  width: 40px;
-  height: 40px;
+  display: block;
+  width: 36px;
+  height: 36px;
+}
+
+.cart-badge {
+  position: absolute;
+  top: -4px;
+  right: -6px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
+  background: var(--bet-danger);
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 800;
+  line-height: 18px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
 }
 
 .cart-details {
   display: flex;
   flex-direction: column;
+  min-width: 0;
+  gap: 1px;
 }
 
 .cart-price {
-  font-size: 1rem;
+  color: var(--bet-ink);
+  font-size: 1.05rem;
   font-weight: 800;
-  color: #17233d;
-}
-
-.cart-strike {
-  text-decoration: line-through;
-  color: #888;
-  margin-right: 5px;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
 }
 
 .cart-bids {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--bet-muted);
   font-size: 0.7rem;
-  letter-spacing: 0.05em;
-  color: #71809a;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.cart-review {
+  position: relative;
+  padding-left: 7px;
+  color: var(--bet-brand);
+  font-weight: 700;
+}
+
+.cart-review::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 3px;
+  height: 3px;
+  margin-top: -1.5px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.6;
 }
 
 .pay-now-button {
-  background: linear-gradient(90deg, #0047ec 0%, #00d0d7 100%);
-  color: white;
+  min-width: 128px;
+  height: 46px;
+  padding: 0 20px;
   border: none;
-  padding: 11px 22px;
-  border-radius: 9px;
+  border-radius: 12px;
+  background: var(--linear-primary-tr, linear-gradient(90deg, #0047ec 0%, #00d0d7 100%));
+  color: #fff;
+  font-size: 0.98rem;
+  font-weight: 700;
   cursor: pointer;
-  font-size: 1.1em;
-  font-weight: bold;
-  flex-shrink: 0;
-  box-shadow: 0 5px 12px rgba(0, 86, 220, 0.2);
-  transition: filter 0.3s ease, opacity 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 6px 14px rgba(0, 86, 220, 0.22);
+  transition: transform 160ms ease, opacity 160ms ease, box-shadow 160ms ease;
 }
 
 .pay-now-button:not(:disabled):hover {
   transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(0, 86, 220, 0.26);
+}
+
+.pay-now-button:not(:disabled):active {
+  transform: translateY(0);
 }
 
 .pay-now-button:disabled {
-  background: linear-gradient(90deg, #0047ec 0%, #00d0d7 100%);
   cursor: not-allowed;
-  opacity: 0.5;              /* Make it look faded */
-  filter: grayscale(40%);    /* Optional: add grayscale to look more "disabled" */
+  opacity: 0.45;
+  filter: grayscale(35%);
+  box-shadow: none;
 }
 
-/* --- Media Queries --- */
-
-/* For screens larger than or equal to 600px (or your desired breakpoint) */
-
-
-/* Adjustments for even smaller screens, if needed */
-@media (max-width: 480px) {
-  .bottom-cart-bar {
-    padding: 5px 10px; /* Reduce padding to save space */
-    margin-bottom: 1rem;
-  }
-
-  .cart-img {
-    width: 35px; /* Slightly smaller icon */
-    height: 35px;
-  }
-
-  .pay-now-button {
-    padding: 8px 15px; /* Slightly smaller button padding */
-    font-size: 1em; /* Smaller font size */
-  }
-}
-
-/* Bet slip chip contrast and alignment */
-.bet-list-item-visual {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: center;
-}
-
-.bet-chips-group {
-  min-height: 36px;
-  gap: 8px;
-}
-
-.bet-chip {
-  width: 36px;
-  height: 36px;
-  margin-right: 0;
-  border-width: 2px;
-  box-shadow: 0 2px 5px rgba(23, 35, 61, 0.12);
-}
-
-.bet-chip.red {
-  border-color: #e03131;
-  background: #ffe3e3;
-}
-
-.bet-chip.orange {
-  border-color: #e67700;
-  background: #fff0d6;
-}
-
-.bet-chip.blue {
-  border-color: #2563eb;
-  background: #e1ebff;
-}
-
-.bet-chip.red .bet-chip-digit {
-  color: #b42318;
-}
-
-.bet-chip.orange .bet-chip-digit {
-  color: #b54708;
-}
-
-.bet-chip.blue .bet-chip-digit {
-  color: #1d4ed8;
-}
-
-.bet-chip-label {
-  width: 14px;
-  height: 14px;
-  top: -3px;
-  right: -3px;
-  transform: none;
-  font-size: 8px;
-  font-weight: 800;
-  line-height: 14px;
-}
-
-.bet-quantity {
-  margin-left: 2px;
-  color: #65738b;
-  font-size: 0.75rem;
-  font-weight: 700;
-}
-
-.bet-amount-actions {
-  min-width: 92px;
-  justify-content: flex-end;
-}
-
-.remove-bet-modal-btn {
-  width: 30px;
-  height: 30px;
-  border-color: #ffb3b3;
-  background: #fff7f7;
-  font-size: 0.95rem;
-}
-
-/* --- Modal Specific Styles (for BetModalContent) --- */
-/* These assume you are using a generic `Modal` component that provides the overlay and basic modal structure.
-   The styles below are for the content *inside* the modal. */
-
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 18px 20px;
-  border-bottom: 1px solid #e9edf4;
-  background: #f8faff;
-}
-.modal-overlay-open {
-  position: fixed;
-  inset: 0;
-  z-index: 2000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1rem;
-  background: rgba(0, 0, 0, 0.55);
-}
-.modal-content-open {
-  width: min(92vw, 480px);
-  max-height: 85vh;
-  overflow: hidden;
-  border-radius: 10px;
-  background: #fff;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
-}
-
-.modal-header h2 {
-  margin: 0;
-  font-size: 1.2rem;
-  color: #17233d;
-}
-
-.modal-kicker {
-  display: block;
-  margin-bottom: 3px;
-  color: #315bd6;
-  font-size: 0.65rem;
-  font-weight: 800;
-  letter-spacing: 0.14em;
-}
-
-.modal-header-actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.close-modal-btn,
-.delete-all-bets-btn {
-  width: 34px;
-  height: 34px;
-  padding: 0;
-  border: 1px solid #e1e7f0;
-  border-radius: 8px;
-  background: #fff;
-  cursor: pointer;
-  display: grid;
-  place-items: center;
-  font-size: 1.15rem;
-  transition: background 160ms ease, color 160ms ease;
-}
-
-.close-modal-btn {
-  color: #65738b;
-}
-
-.close-modal-btn:hover {
-  background: #eef2f8;
-  color: #17233d;
-}
-
-.delete-all-bets-btn {
-  color: #ff4d4f; /* Red color for delete icon */
-}
-
-.delete-all-bets-btn:hover {
-  opacity: 0.8;
-}
-
-.modal-body {
-  padding: 18px 20px 20px;
-  max-height: 70vh;
-  overflow-y: auto;
-}
-
-.no-data-container {
+.bottom-cart-note {
+  margin: 8px 2px 0;
+  color: var(--bet-danger);
+  font-size: 0.72rem;
+  font-weight: 600;
   text-align: center;
-  padding: 30px;
-  color: #666;
 }
 
-.no-data-container img {
-  max-width: 150px; /* Adjust size of no-data image */
-  margin-bottom: 15px;
-}
-
-.bets-list-container {
-  display: flex;
-  flex-direction: column;
-  gap: 15px; /* Spacing between list and button */
-}
-
-.bets-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.bet-list-item-visual {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 0;
-  border-bottom: 1px solid #edf0f5;
-  gap: 12px;
-}
-
-.bet-list-item-visual:last-child {
-  border-bottom: none; /* No border for the last item */
-}
-
-.bet-chips-group {
-  display: flex;
-  align-items: center;
-  gap: 5px; /* Spacing between chips */
-}
-
-.bet-display-group {
-  min-width: 0;
-  flex: 1;
-}
-
-.bet-type-label {
-  display: block;
-  margin-bottom: 6px;
-  color: #7b879c;
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-/* Styles for BetChipDisplay (assuming it's a separate component) */
-/* You'll need to define `.bet-chip`, `.red`, `.orange`, `.blue` etc. in BetChipDisplay's own CSS or here if global */
-.bet-chip {
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    width: 30px; /* Example size */
-    height: 30px; /* Example size */
-    border-radius: 50%;
-    font-weight: bold;
-    color: white;
-    font-size: 0.9em;
-}
-
-.bet-chip.red { background-color: #ff4d4f; }
-.bet-chip.orange { background-color: #ffa500; }
-.bet-chip.blue { background-color: #1e90ff; }
-/* Add more colors if needed */
-
-
-.bet-quantity {
-  margin-left: 10px;
-  font-weight: bold;
-  color: #555;
-}
-
-.bet-amount-actions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-shrink: 0;
-}
-
-.bet-amount-visual {
-  font-weight: bold;
-  color: #17233d;
-  font-size: 0.9rem;
-}
-
-.bet-edit-number-input {
-  width: 76px;
-  height: 34px;
-  box-sizing: border-box;
-  border: 1px solid #9bb6ef;
-  border-radius: 8px;
-  padding: 0 9px;
-  color: #17233d;
-  background: #f5f8ff;
-  font-size: 1rem;
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  outline: none;
-}
-
-.bet-edit-number-input:focus {
-  border-color: #315bd6;
-  box-shadow: 0 0 0 3px rgba(49, 91, 214, 0.14);
-}
-
-.bet-edit-btn,
-.bet-edit-save-btn,
-.bet-edit-cancel-btn {
-  border: 0;
-  border-radius: 6px;
-  padding: 6px 8px;
-  cursor: pointer;
-  font-size: 0.68rem;
-  font-weight: 800;
-}
-
-.bet-edit-btn,
-.bet-edit-save-btn {
-  color: #315bd6;
-  background: #eaf0ff;
-}
-
-.bet-edit-cancel-btn {
-  color: #68758a;
-  background: #eef1f5;
-}
-
-.bet-edit-btn:hover,
-.bet-edit-save-btn:hover {
-  background: #dbe6ff;
-}
-
-.bet-edit-cancel-btn:hover {
-  background: #e1e6ed;
-}
-
-.remove-bet-modal-btn {
-  background: none;
-  border: 1px solid #ff4d4f; /* Red border */
-  color: #ff4d4f;
-  border-radius: 50%;
-  width: 24px;
-  height: 24px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  font-size: 1rem;
-  line-height: 1; /* Adjust vertical alignment */
-}
-
-.remove-bet-modal-btn:hover {
-  background-color: #ff4d4f;
-  color: white;
-}
-
-
-.modal-place-bet-btn {
-  background-color: #007bff; /* Example blue confirm button */
-  color: white;
-  border: none;
-  padding: 12px 25px;
-  border-radius: 9px;
-  cursor: pointer;
-  font-size: 1.1em;
-  font-weight: bold;
-  width: 100%;
-  margin-top: 15px; /* Space from bet list */
-  box-shadow: 0 5px 12px rgba(0, 123, 255, 0.18);
-}
-
-.modal-place-bet-btn:disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
-}
-
-
-/* components/betInfo/BetChipDisplay.css */
-
-.bets-list {
-  display: flex;
-  gap: 1rem; /* Space between bet groups */
-}
-.bet-chip {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%; /* Makes it a circle */
-  width: 30px; /* Adjust size as needed */
-  height: 30px; /* Adjust size as needed */
-  font-size: 14px;
-  font-weight: bold;
-  color: white; /* Default text color */
-  border: 1px solid #ccc; /* Default border */
-  margin-right: 4px; /* Space between chips */
-  position: relative;
-  overflow: hidden; /* Ensure content stays within circle */
-}
-
-/* Color classes for borders */
-.bet-chip.red { border-color: red; color: red; }
-.bet-chip.orange { border-color: orange; color: orange; }
-.bet-chip.blue { border-color: blue; color: blue; }
-
-/* Styles for the digit */
-.bet-chip-digit {
-  z-index: 1; /* Ensure digit is above any background */
-}
-
-/* Styles for the label (A, B, C) if desired inside the circle or as a small overlay */
-.bet-chip-label {
-  position: absolute;
-  top: 0;
-  right: 0;
-  font-size: 8px; /* Smaller font for label */
-  font-weight: normal;
-  color: #555; /* Adjust label color if needed */
-  padding: 1px 2px;
-  border-bottom-left-radius: 4px;
-  background-color: rgba(255, 255, 255, 0.7);
-  z-index: 2; /* Ensure label is on top */
-}
-
-/* For your specific screenshot style (circles with red/orange/blue outlines, white fill, colored number) */
-.bet-chip {
-  background-color: white;
-  border-width: 2px; /* Thicker border for better visibility */
-}
-.bet-chip.red .bet-chip-digit { color: red; }
-.bet-chip.orange .bet-chip-digit { color: orange; }
-.bet-chip.blue .bet-chip-digit { color: blue; }
-
-.bet-chip-label {
-    /* Style the label as a smaller, filled circle at the top-right */
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 12px; /* Small circle size */
-    height: 12px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 8px;
-    color: white; /* Label text color */
-    background-color: #555; /* Default label background */
-    transform: translate(25%, -25%); /* Position it outside/partially outside */
-    z-index: 5;
-    box-shadow: 0 0 2px rgba(0,0,0,0.3);
-}
-
-/* Specific background colors for labels if needed */
-.bet-chip.red .bet-chip-label { background-color: red; }
-.bet-chip.orange .bet-chip-label { background-color: orange; }
-.bet-chip.blue .bet-chip-label { background-color: blue; }
-
-/* Styles for the "x1" or quantity display */
-.bet-quantity {
-  margin-left: 8px;
-  font-size: 14px;
-  font-weight: normal;
-  color: #555;
-}
-
-/* Container for a row of chips, to apply flexbox */
-.bet-chip-group {
-  display: flex;
-  align-items: center;
-  margin-right: 10px; /* Space between groups (e.g., between "1 2 3 x1" and "1 2 4 x1") */
-}
-
-/* For the delete button (trash icon) */
-.delete-all-bets-btn {
-  margin-left: 0;
-}
-
-.delete-all-bets-btn img {
-    width: 20px; /* Adjust size of trash icon */
-    height: 20px;
-    opacity: 0.7;
-}
-
-.delete-all-bets-btn:hover img {
-    opacity: 1;
-}
-
-.remove-bet-modal-btn {
-  margin-left: auto;
-}
-
-.remove-bet-modal-btn:hover {
-  background-color: #ff4d4f;
-  color: white;
-}
-
-
-
-
-/* Responsive adjustments for mobile devices */
-@media (max-width: 480px) {
-  .bottom-cart-wrapper {
-    padding: 8px;
-    width: 100%;
+@media (max-width: 360px) {
+  .pay-now-button {
+    min-width: 104px;
+    padding: 0 14px;
+    font-size: 0.9rem;
   }
 
-  .bottom-cart-bar {
-    padding: 5px 10px;
-    max-width: 100%;
-    /* flex-direction: column; */
-    gap: 10px;
-    margin-bottom: 1rem;
-  }
-
-  .cart-info-button::after {
+  .cart-review {
     display: none;
   }
 }
 
+/* ============================================================
+   2. Number chips (shared by the slip)
+   ============================================================ */
+
+.bet-chips-group {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-height: 34px;
+}
+
+.bet-chip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 34px;
+  height: 34px;
+  border: 2px solid #c9d3e4;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--bet-ink);
+  font-size: 0.95rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  box-shadow: 0 2px 5px rgba(23, 35, 61, 0.1);
+}
+
+.bet-chip.red { border-color: #e03131; background: #fff5f5; }
+.bet-chip.orange { border-color: #e67700; background: #fff7e8; }
+.bet-chip.blue { border-color: #2563eb; background: #eff4ff; }
+
+.bet-chip.red .bet-chip-digit { color: #b42318; }
+.bet-chip.orange .bet-chip-digit { color: #b54708; }
+.bet-chip.blue .bet-chip-digit { color: #1d4ed8; }
+
+.bet-chip-digit {
+  position: relative;
+  z-index: 1;
+  line-height: 1;
+}
+
+.bet-chip-label {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: #56637a;
+  color: #fff;
+  font-size: 8px;
+  font-weight: 800;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.bet-chip.red .bet-chip-label { background: #e03131; }
+.bet-chip.orange .bet-chip-label { background: #e67700; }
+.bet-chip.blue .bet-chip-label { background: #2563eb; }
+
+.bet-quantity {
+  color: var(--bet-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ============================================================
+   3. Bet slip sheet
+   ============================================================ */
+
+.bet-slip-grabber {
+  flex: none;
+  width: 40px;
+  height: 4px;
+  margin: 8px auto 2px;
+  border-radius: 2px;
+  background: #d5dcea;
+}
+
+@media (min-width: 560px) {
+  .bet-slip-grabber { display: none; }
+}
+
+.bet-slip-header {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px 14px;
+  border-bottom: 1px solid var(--bet-line);
+}
+
+.bet-slip-heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.bet-slip-header h2 {
+  margin: 0;
+  color: var(--bet-ink);
+  font-size: 1.1rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.bet-slip-count {
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: var(--bet-brand-soft);
+  color: var(--bet-brand);
+  font-size: 0.72rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.bet-slip-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: none;
+}
+
+.bet-slip-clear-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 34px;
+  padding: 0 12px;
+  border: 1px solid var(--bet-line);
+  border-radius: 9px;
+  background: #fff;
+  color: var(--bet-danger);
+  font-size: 0.76rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 160ms ease;
+}
+
+.bet-slip-clear-btn:hover {
+  background: var(--bet-danger-soft);
+}
+
+.bet-slip-icon-btn {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  flex: none;
+  padding: 0;
+  border: 1px solid var(--bet-line);
+  border-radius: 9px;
+  background: #fff;
+  color: var(--bet-muted);
+  font-size: 1.05rem;
+  cursor: pointer;
+  transition: background 160ms ease, color 160ms ease, border-color 160ms ease;
+}
+
+.bet-slip-icon-btn:hover:not(:disabled) {
+  background: var(--bet-surface-alt);
+  color: var(--bet-ink);
+}
+
+.bet-slip-icon-btn.is-danger {
+  border-color: #f6cfd0;
+  color: var(--bet-danger);
+}
+
+.bet-slip-icon-btn.is-danger:hover:not(:disabled) {
+  background: var(--bet-danger);
+  border-color: var(--bet-danger);
+  color: #fff;
+}
+
+.bet-slip-icon-btn.is-confirm {
+  border-color: #b7d0ff;
+  background: var(--bet-brand-soft);
+  color: var(--bet-brand);
+}
+
+.bet-slip-icon-btn.is-confirm:hover:not(:disabled) {
+  background: var(--bet-brand);
+  color: #fff;
+}
+
+.bet-slip-icon-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.bet-slip-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 2px 16px;
+  overscroll-behavior: contain;
+}
+
+/* --- list rows: one grid, so every row lines up --- */
+
+.bet-slip-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.bet-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 94px 76px;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--bet-line);
+}
+
+.bet-row:last-child {
+  border-bottom: none;
+}
+
+.bet-row-main {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 7px;
+  min-width: 0;
+}
+
+.bet-type-badge {
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: #eef1f6;
+  color: var(--bet-muted);
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.bet-type-badge.is-single { background: #fdeceb; color: #b42318; }
+.bet-type-badge.is-double { background: #fff4e3; color: #b54708; }
+.bet-type-badge.is-triple { background: #eaf1ff; color: #1d4ed8; }
+
+.bet-row-amount {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  text-align: right;
+}
+
+.bet-amount-visual {
+  color: var(--bet-ink);
+  font-size: 0.95rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.bet-row-hint {
+  color: var(--bet-muted);
+  font-size: 0.65rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.bet-row-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.bet-edit-number-input {
+  width: 100%;
+  max-width: 120px;
+  height: 36px;
+  box-sizing: border-box;
+  padding: 0 10px;
+  border: 1px solid #9bb6ef;
+  border-radius: 9px;
+  background: #f5f8ff;
+  color: var(--bet-ink);
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  font-variant-numeric: tabular-nums;
+  outline: none;
+}
+
+.bet-edit-number-input:focus {
+  border-color: var(--bet-brand);
+  box-shadow: 0 0 0 3px rgba(49, 91, 214, 0.14);
+}
+
+/* --- empty state --- */
+
+.bet-slip-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 26px 16px 34px;
+}
+
+.bet-slip-empty img {
+  width: 128px;
+  max-width: 50%;
+  height: auto;
+  margin-bottom: 14px;
+  opacity: 0.9;
+}
+
+.bet-slip-empty-title {
+  margin: 0 0 4px;
+  color: var(--bet-ink);
+  font-size: 0.98rem;
+  font-weight: 700;
+}
+
+.bet-slip-empty-text {
+  margin: 0 0 18px;
+  max-width: 34ch;
+  color: var(--bet-muted);
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.bet-slip-empty-btn {
+  height: 42px;
+  padding: 0 22px;
+  border: none;
+  border-radius: 11px;
+  background: var(--bet-brand-soft);
+  color: var(--bet-brand);
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.bet-slip-empty-btn:hover {
+  background: #dbe6ff;
+}
+
+/* --- footer summary --- */
+
+.bet-slip-footer {
+  flex: none;
+  padding: 14px 16px calc(16px + env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid var(--bet-line);
+  background: #fbfcfe;
+}
+
+@media (min-width: 560px) {
+  .bet-slip-footer {
+    padding-bottom: 16px;
+  }
+}
+
+.bet-summary {
+  margin: 0 0 12px;
+  display: grid;
+  gap: 7px;
+}
+
+.bet-summary-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.bet-summary-row dt {
+  color: var(--bet-muted);
+  font-size: 0.8rem;
+}
+
+.bet-summary-row dd {
+  margin: 0;
+  color: var(--bet-ink);
+  font-size: 0.85rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.bet-summary-row.is-negative dd {
+  color: var(--bet-danger);
+}
+
+.bet-summary-row.is-total {
+  margin-top: 3px;
+  padding-top: 9px;
+  border-top: 1px dashed var(--bet-line);
+}
+
+.bet-summary-row.is-total dt {
+  color: var(--bet-ink);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.bet-summary-row.is-total dd {
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+
+.bet-slip-alert {
+  margin: 0 0 10px;
+  padding: 9px 11px;
+  border-radius: 9px;
+  background: var(--bet-danger-soft);
+  color: #a52a2f;
+  font-size: 0.76rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.bet-slip-confirm-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  height: 50px;
+  border: none;
+  border-radius: 12px;
+  background: var(--linear-primary-tr, linear-gradient(90deg, #0047ec 0%, #00d0d7 100%));
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(0, 86, 220, 0.22);
+  transition: transform 160ms ease, opacity 160ms ease;
+}
+
+.bet-slip-confirm-btn:not(:disabled):active {
+  transform: scale(0.99);
+}
+
+.bet-slip-confirm-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+  filter: grayscale(35%);
+  box-shadow: none;
+}
+
+.bet-slip-confirm-amount {
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.22);
+  font-size: 0.92rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+@media (max-width: 480px) {
+ .bottom-cart-wrapper{
+  bottom:0px;
+ }
+}
+
+@media (max-width: 400px) {
+  .bet-row {
+    grid-template-columns: minmax(0, 1fr) 86px 76px;
+  }
+}
+
+@media (max-width: 360px) {
+  .bet-row {
+    grid-template-columns: minmax(0, 1fr) 76px 72px;
+    gap: 8px;
+  }
+
+  .bet-chip {
+    width: 31px;
+    height: 31px;
+    font-size: 0.88rem;
+  }
+
+  .bet-chips-group {
+    gap: 6px;
+  }
+
+  .bet-amount-visual {
+    font-size: 0.88rem;
+  }
+
+  .bet-slip-clear-btn span {
+    display: none;
+  }
+}

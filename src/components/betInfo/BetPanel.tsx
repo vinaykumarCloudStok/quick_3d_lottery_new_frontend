@@ -119,7 +119,12 @@ const BetPanel: React.FC<BetPanelProps> = ({
     <>
       <div className="bottom-cart-wrapper">
         <div className="bottom-cart-bar">
-          <button className="cart-info cart-info-button" type="button" onClick={() => setIsCartOpen(true)}>
+          <button
+            className="cart-info cart-info-button"
+            type="button"
+            onClick={() => setIsCartOpen(true)}
+            aria-label={`Review bet slip, ${totalBids} bids, total ${totalBetAmount.toFixed(2)} rupees`}
+          >
             <div className="cart-icon" ref={animationTargetRef}> {/* Attach the ref here! */}
               <div className="icon-wrapper">
                 <img
@@ -128,13 +133,17 @@ const BetPanel: React.FC<BetPanelProps> = ({
                   src={icon.shopCart}
                   data-loaded="true"
                 />
+                {totalBids > 0 && <span className="cart-badge">{totalBids > 99 ? '99+' : totalBids}</span>}
               </div>
             </div>
             <div className="cart-details">
               <span className="cart-price">
-                {totalBetAmount.toFixed(2)}
+                ₹{totalBetAmount.toFixed(2)}
               </span>
-              <span className="cart-bids">{totalBids} BIDS</span>
+              <span className="cart-bids">
+                {totalBids} {totalBids === 1 ? 'bid' : 'bids'}
+                <span className="cart-review">Tap to review</span>
+              </span>
             </div>
           </button>
 
@@ -148,6 +157,12 @@ const BetPanel: React.FC<BetPanelProps> = ({
             Place Bet
           </button>
         </div>
+
+        {totalBetAmount > userBalance && (
+          <p className="bottom-cart-note">
+            Not enough balance for ₹{totalBetAmount.toFixed(2)}. Remove a bet or top up.
+          </p>
+        )}
       </div>
 
       {isPaymentSuccessModalOpen && (
@@ -168,7 +183,7 @@ const BetPanel: React.FC<BetPanelProps> = ({
       )}
 
       {isCartOpen && (
-        <Modal onClose={() => setIsCartOpen(false)} isOpen={true}>
+        <Modal onClose={() => setIsCartOpen(false)} isOpen={true} className="modal-sheet" ariaLabel="Bet slip">
           <BetModalContent
             currentBets={currentBets}
             totalBetAmount={totalBetAmount}
