@@ -1,444 +1,604 @@
-/* src/components/OrderData/order.css */
+/* src/components/history/order.css */
 
 .order-data-container {
-  font-family: 'Arial', sans-serif;
-  max-width: 600px; /* Adjust max-width to fit screenshot style */
-  /* margin: 0 auto; */
-  background-color: #fff; /* White background for the main container */
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  overflow: hidden; /* Ensures rounded corners are respected and hides any accidental overflow */
-  box-sizing: border-box; /* Crucial for consistent sizing */
+  /* Single source of truth for column alignment.
+     The header row and every data row use this exact template,
+     so columns can never drift out of line. */
+  --order-cols: minmax(0, 1.3fr) minmax(0, 0.95fr) minmax(0, 0.6fr) minmax(0, 1.05fr) 18px;
+  --order-gap: 8px;
+  --order-pad-x: 14px;
+
+  --order-line: #eceff5;
+  --order-muted: #8a93a6;
+  --order-ink: #1b2439;
+  --order-win: #16a75c;
+  --order-lose: #8a93a6;
+
+  width: 100%;
+  background-color: #fff;
+  border: 1px solid var(--order-line);
+  border-radius: 14px;
+  overflow: hidden;
+  box-sizing: border-box;
+  color: var(--order-ink);
 }
 
-/* Loader Styles */
-.loader-container-order {
+/* ---------- Draw summary card ---------- */
+
+.order-draw-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px var(--order-pad-x);
+  background: linear-gradient(90deg, #f3f7ff 0%, #fafbff 100%);
+  border-bottom: 1px solid var(--order-line);
+  box-sizing: border-box;
+}
+
+.order-draw-left,
+.order-draw-right {
   display: flex;
   flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.order-draw-right {
+  align-items: flex-end;
+}
+
+.order-draw-type {
+  font-size: 0.9rem;
+  font-weight: 800;
+  line-height: 1.2;
+  color: var(--order-ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.order-draw-id {
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--order-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.order-draw-label {
+  font-size: 0.64rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--order-muted);
+  line-height: 1.2;
+}
+
+.order-draw-circles {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ---------- Chips ---------- */
+
+.order-chip {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 200px;
-}
-
-.loader-order {
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #3498db;
+  width: 26px;
+  height: 26px;
   border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  animation: spin 1s linear infinite;
+  background-color: #fff;
+  font-size: 0.8rem;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--order-ink);
+  box-sizing: border-box;
+  flex-shrink: 0;
 }
 
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
+.order-chip-lg {
+  width: 28px;
+  height: 28px;
+  font-size: 0.88rem;
+}
+
+.order-chip-sm {
+  width: 22px;
+  height: 22px;
+  font-size: 0.72rem;
+}
+
+.chip-a {
+  border: 2px solid #d63b3b;
+}
+.chip-b {
+  border: 2px solid #f39c12;
+}
+.chip-c {
+  border: 2px solid #3498db;
+}
+.chip-default {
+  border: 2px solid #c6ccd8;
+  color: var(--order-muted);
+}
+
+/* ---------- Shared grid rows ---------- */
+
+.order-table {
+  width: 100%;
+}
+
+.order-row {
+  display: grid;
+  grid-template-columns: var(--order-cols);
+  align-items: center;
+  gap: var(--order-gap);
+  padding: 10px var(--order-pad-x);
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.ocol {
+  min-width: 0;
+}
+
+/* Per-column alignment is declared once and inherited by
+   both the header cell and the matching body cell. */
+.ocol-number {
+  text-align: left;
+}
+.ocol-time {
+  text-align: left;
+}
+.ocol-bet {
+  text-align: right;
+}
+.ocol-result {
+  text-align: right;
+}
+.ocol-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+/* Header */
+
+.order-row-head {
+  background-color: #f5f7fb;
+  border-bottom: 1px solid var(--order-line);
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--order-muted);
+  padding-top: 9px;
+  padding-bottom: 9px;
+}
+
+/* Data rows */
+
+.order-row-item {
+  position: relative;
+  min-height: 52px;
+  border-bottom: 1px solid var(--order-line);
+  cursor: pointer;
+  outline: none;
+  transition: background-color 0.18s ease;
+}
+
+.order-row-item::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background-color: transparent;
+  transition: background-color 0.18s ease;
+}
+
+.order-row-item.is-win::before {
+  background-color: var(--order-win);
+}
+
+.order-row-item:hover,
+.order-row-item:focus-visible {
+  background-color: #f8faff;
+}
+
+.order-row-item.is-open {
+  background-color: #f6f9ff;
+  border-bottom-color: transparent;
+}
+
+.order-chip-stack {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.order-row-item .ocol-time {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  line-height: 1.2;
+}
+
+.order-time-main {
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: var(--order-ink);
+  white-space: nowrap;
+}
+
+.order-time-sub {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--order-muted);
+  white-space: nowrap;
+}
+
+.order-row-item .ocol-bet {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: var(--order-ink);
+  white-space: nowrap;
+}
+
+.order-row-item .ocol-result {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  line-height: 1.2;
+}
+
+.order-status {
+  font-size: 0.72rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.order-win-amount {
+  font-size: 0.72rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.is-won {
+  color: var(--order-win);
+}
+
+.is-nowin {
+  color: var(--order-lose);
+}
+
+.order-arrow {
+  width: 14px;
+  height: 14px;
+  color: #b3bbc9;
+  transition: transform 0.2s ease, color 0.2s ease;
+  flex-shrink: 0;
+}
+
+.order-row-item.is-open .order-arrow {
+  transform: rotate(90deg);
+  color: var(--basic-color-primary, #176be3);
+}
+
+/* ---------- Accordion detail ---------- */
+
+.order-detail {
+  padding: 4px var(--order-pad-x) 12px;
+  background-color: #f6f9ff;
+  border-bottom: 1px solid var(--order-line);
+  box-sizing: border-box;
+  animation: order-detail-in 0.2s ease;
+}
+
+@keyframes order-detail-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
   }
-  100% {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.order-detail-grid {
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  border: 1px solid var(--order-line);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.order-detail-item {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-bottom: 1px solid #f2f4f9;
+}
+
+.order-detail-item:last-child {
+  border-bottom: none;
+}
+
+.odi-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--order-muted);
+  text-align: left;
+}
+
+.odi-value {
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: var(--order-ink);
+  text-align: right;
+  word-break: break-word;
+}
+
+.order-detail-bets {
+  margin-top: 10px;
+  background-color: #fff;
+  border: 1px solid var(--order-line);
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.odb-title {
+  display: block;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--order-muted);
+  margin-bottom: 8px;
+}
+
+.odb-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.7fr) minmax(0, 0.8fr);
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  border-top: 1px dashed #edf0f6;
+}
+
+.odb-row:first-of-type {
+  border-top: none;
+}
+
+.odb-chips {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.odb-amount,
+.odb-win {
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.odb-amount {
+  color: var(--order-ink);
+}
+
+/* ---------- Show more ---------- */
+
+.order-show-more {
+  display: flex;
+  justify-content: center;
+  padding: 12px var(--order-pad-x);
+  background-color: #fff;
+}
+
+.order-show-more-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 150px;
+  min-height: 38px;
+  padding: 9px 22px;
+  border: 1px solid #d9e3f7;
+  border-radius: 10px;
+  background-color: #f4f8ff;
+  color: var(--basic-color-primary, #176be3);
+  font-size: 0.8rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background-color 0.18s ease, border-color 0.18s ease;
+}
+
+.order-show-more-btn:hover:not(:disabled) {
+  background-color: #e8f0ff;
+  border-color: #c3d6f5;
+}
+
+.order-show-more-btn:disabled {
+  cursor: default;
+  opacity: 0.8;
+}
+
+.order-btn-loader {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #d9e3f7;
+  border-top-color: var(--basic-color-primary, #176be3);
+  border-radius: 50%;
+  animation: order-spin 0.8s linear infinite;
+}
+
+@keyframes order-spin {
+  to {
     transform: rotate(360deg);
   }
 }
 
-.order-data-container.no-data {
-    padding: 20px;
-    text-align: center;
-    color: #666;
-    background-color: #fbfcfe;
-    display: flex; /* Use flexbox for centering image and text */
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 250px;
-}
+/* ---------- Empty state ---------- */
 
-.no-data-image {
-  width: 150px; /* Adjusted size for better balance */
-  height: auto; /* Maintain aspect ratio */
-  margin-bottom: 15px;
-  opacity: 0.7;
-}
-
-
-/* Current Draw Header */
-.current-draw-header {
-  /* display: flex; */
-  align-items: center;
-  justify-content: space-between;
-  padding: 15px;
-  background-color: #f7f7f7;
-  border-bottom: 1px solid #eee;
-  font-size: 0.95em;
-  color: #333;
-  flex-wrap: wrap; /* Allow content to wrap on smaller screens */
-  gap: 10px; /* Space between flex items */
-}
-
-.current-lobby-min {
+.order-empty-state {
   display: flex;
   flex-direction: column;
-  /* flex: 1; */ /* Let content determine width for each section */
-}
-
-.draw-type {
-  font-weight: bold;
-  margin-right: 8px;
-  font-size: 20px;
-}
-
-.draw-id-text {
-  color: #666;
-  font-size: 16px;
-  font-weight: 700;
-  line-height: 1.5; /* Adjusted for better spacing */
-  overflow: hidden; /* Hide overflow */
-  text-overflow: ellipsis; /* Add ellipsis */
-  white-space: nowrap; /* Prevent wrapping */
-}
-
-.draw-results-label {
-  font-weight: bold;
-  line-height: 1.5; /* Adjusted for better spacing */
-  margin-right: 5px; /* Add some space before the circles */
-}
-
-/* Common style for the main result circle in the header */
-.current-draw-header .number-circle-screenshot {
-  display: flex;
   align-items: center;
   justify-content: center;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  color: white;
-  font-weight: bold;
-  font-size: 18px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-  flex-shrink: 0; /* Prevent these circles from shrinking */
-  margin-left: 5px; /* Spacing between circles in the header */
-}
-/* Specific colors for category circles (A, B, C) - Updated for Header */
-.current-draw-header .red-order { border: 3px solid darkred; color: black;}
-.current-draw-header .orange-order { border: 3px solid #f39c12; color: black;}
-.current-draw-header .blue-order { border:3px solid #3498db; color: black;}
-
-
-/* Table Headers */
-.bet-list-headers {
-  display: flex;
-  justify-content: space-between;
-  padding: 10px 15px;
-  background-color: #f0f0f0;
-  border-bottom: 1px solid #ddd;
-  font-weight: bold;
-  font-size: 0.85em;
-  color: #555;
-  text-transform: uppercase;
-  box-sizing: border-box; /* Include padding in width */
-}
-
-.bet-list-headers .col {
-  flex: 1;
-  text-align: center; /* Default center align for headers */
-  overflow: hidden; /* Hide overflow */
-  text-overflow: ellipsis; /* Add ellipsis */
-  white-space: nowrap; /* Prevent text wrapping */
-  padding: 0 5px; /* Add some horizontal padding */
-}
-
-.bet-list-headers .col:first-child {
-  text-align: left;
-  flex: 1.2; /* Adjusted flex for Number column */
-}
-.bet-list-headers .col:nth-child(2) { /* Time column */
-  flex: 1;
-  text-align: left;
-}
-.bet-list-headers .col:nth-child(3) { /* Bet column */
-  flex: 0.6;
-}
-.bet-list-headers .col:last-child {
-  text-align: right;
-  /* flex: 1.2; */
-}
-
-
-/* Bet Row (Accordion Item) */
-.bet-items-list {
-  background-color: #fff;
-}
-
-.bet-row {
-  display: flex;
-  align-items: center;
-  padding: 12px 15px;
-  border-bottom: 1px solid #eee;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  box-sizing: border-box; /* Include padding in width */
-}
-
-.bet-row:hover {
-  background-color: #f9f9f9;
-}
-
-.bet-row .col {
-  flex: 1;
-  color: #333;
-  text-align: right; /* Default center align for columns */
-  overflow: hidden; 
-  text-overflow: ellipsis; 
-  white-space: nowrap; 
-  /* padding: 0 5px;  */
-}
-/* 
-.bet-row .col:first-child {
-  text-align: left;
-  flex: 1.5;
-} */
-.bet-row .col:nth-child(2) { /* Time column */
-  /* flex: 1.2; */
-}
-.bet-row .col:nth-child(3) { /* Bet column */
-  flex: 0.8;
-}
-.bet-row .col:last-child {
-  text-align: right;
-  flex: 1.2;
-}
-
-
-.number-col {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start; /* Align number circles to the left */
-}
-
-/* Container for multiple circles in the NUMBER column */
-.multi-chip-display {
-    display: flex;
-    gap: 4px; /* Space between the circles */
-    flex-wrap: wrap; /* Allow wrapping if too many circles */
-    align-items: center; /* Vertically center chips if they wrap */
-    justify-content: flex-start; /* Align wrapped chips to the left */
-}
-
-/* Style for individual circles within the multi-chip display */
-.number-circle-multi {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 25px;
-  height: 25px;
-  border-radius: 50%;
-  color: white;
-  font-weight: bold;
-  font-size: 14px;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-  flex-shrink: 0; /* Prevent these chips from shrinking */
-}
-
-/* Specific colors for category circles (A, B, C) */
-.red-order { border: 3px solid darkred; background-color: #fff; color: #333;} /* Red for A */
-.orange-order { border: 3px solid #f39c12; background-color: #fff; color: #333;} /* Orange for B */
-.blue-order { border: 3px solid #3498db; background-color: #fff; color: #333;} /* Blue for C */
-.green-order { border: 2px solid #27ae60; background-color: #fff; color: #27ae60;} /* Example green */
-.default-order { background-color: #95a5a6; color: white; border: 2px solid #95a5a6;} /* Grey for fallback */
-
-
-.time-col {
-  color: #666;
-  font-size: 0.85em;
-}
-
-.bet-col {
-  font-weight: 600;
-  font-size: 0.9em; /* Ensure consistent font size */
-}
-
-.result-col {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end; /* Align content to the right */
-  gap: 5px; /* Space between status, amount, and arrow */
-}
-
-.result-status {
-  font-weight: 600;
-  font-size: 12px; /* Consistent font size */
-}
-
-.win-text {
-  color: #27ae60; /* Green for win */
-}
-
-.no-win-text {
-  color: #e74c3c; /* Red for no win */
-}
-
-.result-amount {
-  font-size: 13px;
-  color: #333;
-  font-weight: 500;
-  flex-shrink: 0; /* Prevent amount from shrinking */
-}
-
-.accordion-arrow {
-  font-size: 0.8em;
-  color: #999;
-  margin-left: 5px;
-  transition: transform 0.2s ease;
-  flex-shrink: 0; /* Prevent arrow from shrinking */
-}
-
-.bet-row[aria-expanded="true"] .accordion-arrow {
-  transform: rotate(90deg); /* Rotate for open state */
-}
-
-/* Accordion Content */
-.accordion-content {
-  padding: 10px 15px 10px 15px; /* Uniform padding */
-  background-color: #fcfcfc;
-  border-bottom: 1px solid #eee;
-  font-size: 14px;
-  color: #555;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  box-sizing: border-box; /* Ensure padding is included in width */
-}
-
-.accordion-content .detail-item {
-  display: flex;
-  justify-content: space-between;
-  word-break: break-word; /* Allow long words to break */
-}
-.accordion-content .detail-item span:first-child {
-  font-weight: bold;
-  color: #333;
-  font-size: 1rem;
-}
-
-
-/* Show More Button */
-.show-more-data {
+  gap: 6px;
+  min-height: 240px;
+  padding: 24px;
   text-align: center;
-  /* padding: 15px; */
+  box-sizing: border-box;
 }
 
-.show-more {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1em;
-  transition: background-color 0.2s ease;
+.order-empty-image {
+  width: 130px;
+  height: auto;
+  opacity: 0.75;
+  margin-bottom: 4px;
 }
 
-.show-more:hover {
-  background-color: #0056b3;
+.order-empty-title {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: var(--order-ink);
+  margin: 0;
 }
 
-.loader-small {
-  border: 3px solid #f3f3f3;
-  border-top: 3px solid #3498db;
-  border-radius: 50%;
-  width: 20px;
-  height: 20px;
-  animation: spin 1s linear infinite;
-  display: inline-block;
+.order-empty-sub {
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--order-muted);
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .current-draw-header {
-    flex-direction: column; /* Stack header elements on smaller screens */
-    align-items: flex-start;
-  }
-  .current-draw-header > div {
-    width: 100%; /* Make each section full width */
-  }
-  .current-draw-header .number-circle-screenshot {
-    margin-left: 0; /* Remove left margin when stacked */
-    margin-right: 5px; /* Add right margin for spacing */
-  }
+/* ---------- Loading skeleton ---------- */
 
-  .bet-list-headers, .bet-row {
-    padding: 10px; /* Reduce padding on smaller screens */
+.order-skeleton-wrap {
+  padding: 12px var(--order-pad-x);
+}
+
+.order-skeleton-row {
+  display: grid;
+  grid-template-columns: var(--order-cols);
+  align-items: center;
+  gap: var(--order-gap);
+  padding: 12px 0;
+  border-bottom: 1px solid var(--order-line);
+}
+
+.order-skeleton-row:last-child {
+  border-bottom: none;
+}
+
+.sk-block {
+  height: 14px;
+  border-radius: 7px;
+  background: linear-gradient(90deg, #eef1f6 25%, #f7f9fc 37%, #eef1f6 63%);
+  background-size: 400% 100%;
+  animation: order-shimmer 1.3s ease infinite;
+}
+
+.sk-chips {
+  height: 24px;
+  border-radius: 12px;
+}
+
+.sk-time {
+  width: 80%;
+}
+
+.sk-bet {
+  width: 70%;
+  justify-self: end;
+}
+
+.sk-result {
+  width: 85%;
+  justify-self: end;
+}
+
+@keyframes order-shimmer {
+  0% {
+    background-position: 100% 50%;
   }
-
-  .bet-list-headers .col, .bet-row .col {
-    font-size: 14px; /* Slightly smaller font for tighter fit */
-    padding: 0 3px; /* Reduce horizontal padding */
-    font-weight: 600;
-  }
-
-  /* Adjust flex values for better distribution on smaller screens */
-  .bet-list-headers .col:first-child, .bet-row .col:first-child { flex: 1; }
-  .bet-list-headers .col:nth-child(2), .bet-row .col:nth-child(2) { flex: 1.1; text-align: left; }
-  .bet-list-headers .col:nth-child(3), .bet-row .col:nth-child(3) { flex: 0.6; }
-  .bet-list-headers .col:last-child, .bet-row .col:last-child { flex: 1.2; }
-
-  .number-circle-multi {
-    width: 25px;
-    height: 25px;
-    font-size: 14px;
-  }
-
-  .result-amount {
-    font-size: 13px;
+  100% {
+    background-position: 0 50%;
   }
 }
+
+/* ---------- Responsive ----------
+   Only the shared variables change, so the header and the
+   rows stay locked to the same columns at every width. */
 
 @media (max-width: 480px) {
   .order-data-container {
-    padding: 5px; /* Even less padding on very small screens */
+    --order-cols: minmax(0, 1.25fr) minmax(0, 0.85fr) minmax(0, 0.58fr) minmax(0, 1fr) 16px;
+    --order-gap: 6px;
+    --order-pad-x: 10px;
+    border-radius: 12px;
   }
 
-  .current-draw-header {
-    padding: 10px;
+  .order-chip {
+    width: 23px;
+    height: 23px;
+    font-size: 0.72rem;
   }
 
-  .draw-type {
-    font-size: 18px;
-  }
-  .draw-id-text {
-    font-size: 14px;
-  }
-  .draw-results-label {
-    font-size: 0.9em;
-  }
-  .current-draw-header .number-circle-screenshot {
-    width: 28px;
-    height: 28px;
-    font-size: 16px;
+  .order-chip-lg {
+    width: 25px;
+    height: 25px;
+    font-size: 0.78rem;
   }
 
-  .bet-list-headers, .bet-row {
-    padding: 8px; /* Further reduce padding */
+  .order-draw-type {
+    font-size: 0.82rem;
   }
 
-  .bet-list-headers .col, .bet-row .col {
-    font-size: 0.75em; /* Even smaller font */
+  .order-draw-id {
+    font-size: 0.72rem;
   }
 
-  /* Fine-tune flex values for extremely small screens */
-  .bet-list-headers .col:first-child, .bet-row .col:first-child { flex: 0.9; }
-  .bet-list-headers .col:nth-child(2), .bet-row .col:nth-child(2) { flex: 1.0; }
-  .bet-list-headers .col:nth-child(3), .bet-row .col:nth-child(3) { flex: 0.6; }
-  .bet-list-headers .col:last-child, .bet-row .col:last-child { flex: 1.1; }
-
-  .number-circle-multi {
-    width: 20px;
-    height: 20px;
-    font-size: 11px;
+  .order-row-item .ocol-bet,
+  .order-status,
+  .order-win-amount {
+    font-size: 0.7rem;
   }
 
-  .result-status {
-    font-size: 10px;
+  .order-time-main,
+  .order-time-sub {
+    font-size: 0.65rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .order-data-container {
+    --order-cols: minmax(0, 1.2fr) minmax(0, 0.8fr) minmax(0, 0.55fr) minmax(0, 0.95fr) 14px;
+    --order-gap: 5px;
+    --order-pad-x: 8px;
   }
 
-  .result-amount {
-    font-size: 11px;
+  .order-chip {
+    width: 21px;
+    height: 21px;
+    font-size: 0.66rem;
+  }
+
+  .order-chip-stack {
+    gap: 4px;
   }
 }

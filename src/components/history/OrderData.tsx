@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
-import "./order.css"; // Ensure this path is correct
-import { getCaller } from "../../utility/api"; // Ensure this path is correct
-import { timerTabData, type HistoryItem, type BetItem } from "../../utility/dataModal"; // Assuming timerTabData is correctly imported
-import { icon } from "../../utility/icon"; // Assuming 'icon' object has a 'noData' property
+import React, { useEffect, useMemo, useState } from "react";
+import "./order.css";
+import { getCaller } from "../../utility/api";
+import { timerTabData, type HistoryItem, type BetItem } from "../../utility/dataModal";
+import { icon } from "../../utility/icon";
 
 interface mylistProp {
   historyData: HistoryItem[];
@@ -14,22 +14,25 @@ interface mylistProp {
 
 const parseChipData = (chipString: string) => {
   if (!chipString) return [];
-  return chipString.split("-").map((chip) => {
-    const [value, category] = chip.split(":");
-    return { value: parseInt(value, 10), category };
-  });
+  return chipString
+    .split("-")
+    .map((chip) => {
+      const [value, category] = chip.split(":");
+      return { value: parseInt(value, 10), category: (category || "").trim() };
+    })
+    .filter((chip) => !Number.isNaN(chip.value));
 };
 
 const getChipCircleClass = (category: string) => {
   switch (category) {
     case "A":
-      return "red-order";
+      return "chip-a";
     case "B":
-      return "orange-order";
+      return "chip-b";
     case "C":
-      return "blue-order";
+      return "chip-c";
     default:
-      return "default-order";
+      return "chip-default";
   }
 };
 
@@ -42,33 +45,35 @@ const parseJson = <T,>(value: T | string, fallback: T): T => {
   }
 };
 
+const toAmount = (value: unknown) => {
+  const parsed = Number(value ?? 0);
+  return Number.isFinite(parsed) ? parsed : 0;
+};
+
+const formatAmount = (value: unknown) => toAmount(value).toFixed(2);
+
 const OrderData: React.FC<mylistProp> = ({ info, historyData, lobbyTab, placedBets }) => {
   const [myBetLoading, setMyBetLoading] = useState(true);
   const [gameLoading, setGameLoading] = useState(false);
   const [myBetData, setMyBetData] = useState<any[]>([]);
-  // Changed the type to string | number because index will be a number
-  const [openAccordionKey, setOpenAccordionKey] = useState<string | null>(null); // Only store the key of the currently open accordion
-
+  const [openAccordionKey, setOpenAccordionKey] = useState<string | null>(null);
   const [currentLoadCount, setCurrentLoadCount] = useState(10);
 
   const activeRoomId = timerTabData[lobbyTab]?.roomId;
 
   const lobbyTypeText =
     activeRoomId === 101
-      ? "Instant Lottery 1 min"
+      ? "Instant Lottery 1 Min"
       : activeRoomId === 102
-      ? "Instant Lottery 3 min"
+      ? "Instant Lottery 3 Min"
       : "Instant Lottery";
 
-  // Modified toggleAccordion logic:
-  // It now stores only the *one* key of the open accordion, or null if none are open.
   const toggleAccordion = (key: string) => {
     setOpenAccordionKey((prevKey) => (prevKey === key ? null : key));
   };
 
   const fetchBetData = async (limit: number, roomId: number | undefined) => {
     if (!roomId) {
-      console.warn("Room ID is undefined, cannot fetch bet data.");
       setMyBetData([]);
       setMyBetLoading(false);
       setGameLoading(false);
@@ -80,9 +85,7 @@ const OrderData: React.FC<mylistProp> = ({ info, historyData, lobbyTab, placedBe
       const res = await getCaller(
         `bets/history/?user_id=${info.user_id}&operator_id=${info.operator_id}&limit=${limit}&lobby_id=${roomId}`
       );
-      const newBets = (res?.data || []).filter(
-        (item: any) => Number(item.room_id) === roomId
-      );
+      const newBets = (res?.data || []).filter((item: any) => Number(item.room_id) === roomId);
 
       const transformedBets = newBets.map((item: any) => {
         const rawBets = parseJson<any[]>(item.user_bets, []);
@@ -97,19 +100,18 @@ const OrderData: React.FC<mylistProp> = ({ info, historyData, lobbyTab, placedBe
             const settlement = settlements.find((entry: any) => entry.chip === bet.chip);
             return {
               chip_string: bet.chip || bet.chip_string || "",
-              btAmt: Number(bet.amt ?? bet.btAmt ?? 0),
-              mult: Number(settlement?.mult ?? bet.mult ?? 0),
-              winAmt: Number(settlement?.winAmt ?? bet.winAmt ?? 0),
+              btAmt: toAmount(bet.amt ?? bet.btAmt),
+              mult: toAmount(settlement?.mult ?? bet.mult),
+              winAmt: toAmount(settlement?.winAmt ?? bet.winAmt),
               status: settlement?.status ?? item.status,
             };
           }),
-          total: Number(item.total ?? item.bet_amount ?? item.btAmt ?? 0),
+          total: toAmount(item.total ?? item.bet_amount ?? item.btAmt),
           room_name: "Game Lobby",
         };
       });
 
       setMyBetData(transformedBets);
-      // When new data is fetched, close any currently open accordion
       setOpenAccordionKey(null);
     } catch (error) {
       console.error("Failed to fetch bet data:", error);
@@ -143,210 +145,263 @@ const OrderData: React.FC<mylistProp> = ({ info, historyData, lobbyTab, placedBe
   }, [currentLoadCount, info.user_id, info.operator_id, activeRoomId]);
 
   useEffect(() => {
-    if (
-      historyData.length > 0 &&
-      info.user_id &&
-      info.operator_id &&
-      activeRoomId !== undefined
-    ) {
+    if (historyData.length > 0 && info.user_id && info.operator_id && activeRoomId !== undefined) {
       const timer = setTimeout(() => {
         fetchBetData(currentLoadCount, activeRoomId);
       }, 3000);
       return () => clearTimeout(timer);
     }
-  }, [
-    historyData,
-    currentLoadCount,
-    info.user_id,
-    info.operator_id,
-    activeRoomId,
-  ]);
+  }, [historyData, currentLoadCount, info.user_id, info.operator_id, activeRoomId]);
+
+  const orderRows = useMemo(() => {
+    return myBetData.map((orderItem, index) => {
+      const bets: any[] = Array.isArray(orderItem.user_bets) ? orderItem.user_bets : [];
+      const chips = bets.flatMap((bet) => parseChipData(bet.chip_string));
+      const betAmount = bets.reduce((sum, bet) => sum + toAmount(bet.btAmt), 0);
+      const winAmount = bets.reduce((sum, bet) => sum + toAmount(bet.winAmt), 0);
+      const multiplier = bets.reduce((max, bet) => Math.max(max, toAmount(bet.mult)), 0);
+      const isWin =
+        bets.some((bet) => String(bet.status ?? "").toLowerCase() === "win") || winAmount > 0;
+
+      const createdAt = new Date(orderItem.created_at);
+      const isValidDate = !Number.isNaN(createdAt.getTime());
+
+      return {
+        key: `${orderItem.lobby_id}-${index}`,
+        lobbyId: orderItem.lobby_id,
+        chips,
+        bets,
+        betAmount,
+        winAmount,
+        multiplier,
+        isWin,
+        total: toAmount(orderItem.total),
+        time: isValidDate
+          ? createdAt
+              .toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", hour12: true })
+              .toUpperCase()
+          : "--:--",
+        date: isValidDate
+          ? createdAt.toLocaleDateString("en-IN", { day: "2-digit", month: "short" })
+          : "--",
+        fullTime: isValidDate
+          ? createdAt.toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })
+          : "--",
+      };
+    });
+  }, [myBetData]);
 
   if (myBetLoading && placedBets.length === 0) {
     return (
-      <div className="loader-container-order">
-        <div className="loader-order"></div>
-        <p>Loading data...</p>
+      <div className="order-data-container">
+        <div className="order-skeleton-wrap">
+          {[0, 1, 2, 3, 4].map((row) => (
+            <div className="order-skeleton-row" key={row}>
+              <span className="sk-block sk-chips" />
+              <span className="sk-block sk-time" />
+              <span className="sk-block sk-bet" />
+              <span className="sk-block sk-result" />
+            </div>
+          ))}
+        </div>
       </div>
     );
   }
 
-  if (myBetData.length === 0 && !myBetLoading && placedBets.length === 0) {
+  if (myBetData.length === 0 && !myBetLoading) {
     return (
-      <div className="order-data-container no-data">
-        <img src={icon.noData} alt="No Data" className="no-data-image" />
-        <p>No bets placed</p>
+      <div className="order-data-container">
+        <div className="order-empty-state">
+          <img src={icon.noData} alt="No data" className="order-empty-image" />
+          <p className="order-empty-title">No orders yet</p>
+          <span className="order-empty-sub">Your placed bets will appear here.</span>
+        </div>
       </div>
     );
   }
 
   const latestDrawInfo = myBetData[0];
-  const latestDrawId = latestDrawInfo?.lobby_id || "N/A";
-  const latestDrawResultA =
-    latestDrawInfo?.result?.a !== undefined ? latestDrawInfo.result.a : "N/A";
-  const latestDrawResultB =
-    latestDrawInfo?.result?.b !== undefined ? latestDrawInfo.result.b : "N/A";
-  const latestDrawResultC =
-    latestDrawInfo?.result?.c !== undefined ? latestDrawInfo.result.c : "N/A";
+  const latestDrawId = latestDrawInfo?.lobby_id ?? "N/A";
+  const drawResults = [
+    { value: latestDrawInfo?.result?.a, className: "chip-a" },
+    { value: latestDrawInfo?.result?.b, className: "chip-b" },
+    { value: latestDrawInfo?.result?.c, className: "chip-c" },
+  ].filter((entry) => entry.value !== undefined && entry.value !== null);
+
+  const canLoadMore = myBetData.length >= currentLoadCount;
 
   return (
     <div className="order-data-container">
-      {placedBets.length > 0 && (
-        <div className="current-placed-bets">
-          <strong>Current Round Bets</strong>
-          {placedBets.map((bet) => (
-            <div className="current-placed-bet" key={bet.id}>
-              <span>{bet.type.toUpperCase()} {String(bet.selectedNumbers)}</span>
-              <span>{bet.amount.toFixed(2)}</span>
-            </div>
-          ))}
+      <div className="order-draw-card">
+        <div className="order-draw-left">
+          <span className="order-draw-type">{lobbyTypeText}</span>
+          <span className="order-draw-id">{latestDrawId}</span>
         </div>
-      )}
-      <div className="current-draw-header">
-        <div className="" style={{ display: "flex", justifyContent: "space-between" }}>
-          <div className="current-lobby-min">
-            <span className="draw-type">{lobbyTypeText}</span>
-            <span className="draw-id-text">{latestDrawId}</span>
-          </div>
-          <div className="current-lobby-min">
-            <span className="draw-results-label">Draw Results:</span>
-            <div className="" style={{ display: "flex" }}>
-              {latestDrawResultA !== "N/A" && (
-                <span className="number-circle-screenshot red-order">
-                  {latestDrawResultA}
+        <div className="order-draw-right">
+          <span className="order-draw-label">Draw Results</span>
+          <div className="order-draw-circles">
+            {drawResults.length > 0 ? (
+              drawResults.map((entry, idx) => (
+                <span key={idx} className={`order-chip order-chip-lg ${entry.className}`}>
+                  {entry.value}
                 </span>
-              )}
-              {latestDrawResultB !== "N/A" && (
-                <span className="number-circle-screenshot orange-order">
-                  {latestDrawResultB}
-                </span>
-              )}
-              {latestDrawResultC !== "N/A" && (
-                <span className="number-circle-screenshot blue-order">
-                  {latestDrawResultC}
-                </span>
-              )}
-            </div>
+              ))
+            ) : (
+              <span className="order-chip order-chip-lg chip-default">?</span>
+            )}
           </div>
         </div>
       </div>
 
-      <div className="bet-list-headers">
-        <div className="col">NUMBER</div>
-        <div className="col">TIME</div>
-        <div className="col">BET</div>
-        <div className="col">RESULT</div>
-      </div>
+      <div className="order-table">
+        <div className="order-row order-row-head">
+          <div className="ocol ocol-number">Number</div>
+          <div className="ocol ocol-time">Time</div>
+          <div className="ocol ocol-bet">Bet</div>
+          <div className="ocol ocol-result">Result</div>
+          <div className="ocol ocol-arrow" aria-hidden="true" />
+        </div>
 
-      <div className="bet-items-list">
-        {myBetData.map((orderItem, index) => {
-          const bet = orderItem.user_bets[0];
-          const parsedChips = parseChipData(bet.chip_string);
+        <div className="order-row-list">
+          {orderRows.map((row) => {
+            const isOpen = openAccordionKey === row.key;
 
-          const formattedTime = new Date(orderItem.created_at)
-            .toLocaleTimeString("en-IN", {
-              hour: "2-digit",
-              minute: "2-digit",
-              hour12: true,
-            })
-            .toUpperCase();
-
-          const formattedDate = new Date(
-            orderItem.created_at
-          ).toLocaleDateString("en-IN", {
-            day: "2-digit",
-            month: "short",
-          });
-
-          // Create a unique key for each item using a combination of lobby_id and index
-          const uniqueKey = `${orderItem.lobby_id}-${index}`;
-          // Check if this specific accordion should be open
-          const isOpen = openAccordionKey === uniqueKey;
-
-          return (
-            <React.Fragment key={uniqueKey}>
-              <div
-                className="bet-row"
-                onClick={() => toggleAccordion(uniqueKey)} // Pass the unique key
-                role="button"
-                aria-expanded={isOpen} // Use the new isOpen variable
-                tabIndex={0}
-              >
-                <div className="col number-col">
-                  <div className="multi-chip-display">
-                    {parsedChips.map((pc, pcIdx) => (
-                      <span
-                        key={pcIdx}
-                        className={`number-circle-multi ${getChipCircleClass(
-                          pc.category
-                        )}`}
-                        title={`Bet on ${pc.category}: ${pc.value}`}
-                      >
-                        {pc.value}
-                      </span>
-                    ))}
-                    {parsedChips.length === 0 && (
-                      <span className="number-circle-multi default-order">
-                        N/A
-                      </span>
-                    )}
+            return (
+              <React.Fragment key={row.key}>
+                <div
+                  className={`order-row order-row-item ${row.isWin ? "is-win" : "is-lose"} ${
+                    isOpen ? "is-open" : ""
+                  }`}
+                  onClick={() => toggleAccordion(row.key)}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault();
+                      toggleAccordion(row.key);
+                    }
+                  }}
+                  role="button"
+                  aria-expanded={isOpen}
+                  tabIndex={0}
+                >
+                  <div className="ocol ocol-number">
+                    <div className="order-chip-stack">
+                      {row.chips.length > 0 ? (
+                        row.chips.map((chip, chipIdx) => (
+                          <span
+                            key={chipIdx}
+                            className={`order-chip ${getChipCircleClass(chip.category)}`}
+                            title={`${chip.category || "Bet"} : ${chip.value}`}
+                          >
+                            {chip.value}
+                          </span>
+                        ))
+                      ) : (
+                        <span className="order-chip chip-default">-</span>
+                      )}
+                    </div>
                   </div>
-                </div>
-                <div className="col time-col">{`${formattedDate} ${formattedTime}`}</div>
-                <div className="col bet-col">{bet.btAmt.toFixed(2)}</div>
-                <div className="col result-col">
-                  <span
-                    className={`result-status ${
-                      bet.status === "win" ? "win-text" : "no-win-text"
-                    }`}
-                  >
-                    {bet.status === "win" ? "Won" : "No Win"}
-                  </span>
-                  <span className="result-amount">
-                    {bet.winAmt.toFixed(2)}
-                  </span>
-                  <span className="accordion-arrow">
-                    {isOpen ? "▲" : "❯"} {/* Use isOpen */}
-                  </span>
-                </div>
-              </div>
-              {/* Conditional rendering based on isOpen */}
-              {isOpen && (
-                <div className="accordion-content">
-                  <div className="detail-item">
-                    <span>Betting Time:</span>
-                    <span>
-                      {new Date(orderItem.created_at).toLocaleString("en-IN", {
-                        timeZone: "Asia/Kolkata",
-                      })}
+
+                  <div className="ocol ocol-time">
+                    <span className="order-time-main">{row.time}</span>
+                    <span className="order-time-sub">{row.date}</span>
+                  </div>
+
+                  <div className="ocol ocol-bet">{formatAmount(row.betAmount)}</div>
+
+                  <div className="ocol ocol-result">
+                    <span className={`order-status ${row.isWin ? "is-won" : "is-nowin"}`}>
+                      {row.isWin ? "Won" : "No Win"}
+                    </span>
+                    <span className={`order-win-amount ${row.isWin ? "is-won" : "is-nowin"}`}>
+                      {row.isWin ? `+${formatAmount(row.winAmount)}` : formatAmount(row.winAmount)}
                     </span>
                   </div>
-                  <div className="detail-item">
-                    <span>Multiplier:</span>
-                    <span>{bet.mult}x</span>
-                  </div>
-                  <div className="detail-item">
-                    <span>Lobby ID:</span>
-                    <span>{orderItem.lobby_id}</span>
-                  </div>
-                  <div className="detail-item">
-                    <span>Total Payment:</span>
-                    <span>{orderItem.total.toFixed(2)}</span>
+
+                  <div className="ocol ocol-arrow">
+                    <svg viewBox="0 0 24 24" className="order-arrow" aria-hidden="true">
+                      <path
+                        d="M9 6l6 6-6 6"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2.4"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
                   </div>
                 </div>
-              )}
-            </React.Fragment>
-          );
-        })}
+
+                {isOpen && (
+                  <div className="order-detail">
+                    <div className="order-detail-grid">
+                      <div className="order-detail-item">
+                        <span className="odi-label">Lobby ID</span>
+                        <span className="odi-value">{row.lobbyId}</span>
+                      </div>
+                      <div className="order-detail-item">
+                        <span className="odi-label">Betting Time</span>
+                        <span className="odi-value">{row.fullTime}</span>
+                      </div>
+                      <div className="order-detail-item">
+                        <span className="odi-label">Multiplier</span>
+                        <span className="odi-value">{row.multiplier}x</span>
+                      </div>
+                      <div className="order-detail-item">
+                        <span className="odi-label">Total Payment</span>
+                        <span className="odi-value">{formatAmount(row.total)}</span>
+                      </div>
+                      <div className="order-detail-item">
+                        <span className="odi-label">Win Amount</span>
+                        <span className={`odi-value ${row.isWin ? "is-won" : "is-nowin"}`}>
+                          {formatAmount(row.winAmount)}
+                        </span>
+                      </div>
+                    </div>
+
+                    {row.bets.length > 1 && (
+                      <div className="order-detail-bets">
+                        <span className="odb-title">Bet Breakdown</span>
+                        {row.bets.map((bet: any, betIdx: number) => (
+                          <div className="odb-row" key={betIdx}>
+                            <span className="odb-chips">
+                              {parseChipData(bet.chip_string).map((chip, chipIdx) => (
+                                <span
+                                  key={chipIdx}
+                                  className={`order-chip order-chip-sm ${getChipCircleClass(
+                                    chip.category
+                                  )}`}
+                                >
+                                  {chip.value}
+                                </span>
+                              ))}
+                            </span>
+                            <span className="odb-amount">{formatAmount(bet.btAmt)}</span>
+                            <span
+                              className={`odb-win ${
+                                toAmount(bet.winAmt) > 0 ? "is-won" : "is-nowin"
+                              }`}
+                            >
+                              {formatAmount(bet.winAmt)}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </React.Fragment>
+            );
+          })}
+        </div>
       </div>
 
-      <div className="show-more-data" onClick={loadMoreData}>
-        {gameLoading ? (
-          <div className="loader-small"></div>
-        ) : (
-          <button className="show-more">Show More</button>
-        )}
-      </div>
+      {canLoadMore && (
+        <div className="order-show-more">
+          <button className="order-show-more-btn" onClick={loadMoreData} disabled={gameLoading}>
+            {gameLoading ? <span className="order-btn-loader" /> : "Show More"}
+          </button>
+        </div>
+      )}
     </div>
   );
 };

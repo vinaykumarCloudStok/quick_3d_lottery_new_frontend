@@ -1,4 +1,4 @@
-import  { useCallback, useEffect, useRef, useState, forwardRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, forwardRef } from "react";
 import { getCaller } from "../../utility/api";
 import "./history.css";
 import LoadingComponent from "../loader/LoadingComponent";
@@ -15,6 +15,19 @@ interface listProp {
   placedBets: BetItem[];
 }
 
+
+const getChipClass = (label: string) => {
+  switch (label) {
+    case "A":
+      return "chip-a";
+    case "B":
+      return "chip-b";
+    case "C":
+      return "chip-c";
+    default:
+      return "chip-default";
+  }
+};
 
 interface ApiGameHistoryItem {
   lobby_id: string;
@@ -41,6 +54,11 @@ const History = forwardRef<HTMLDivElement, listProp>(
       { name: "Result History" },
     ];
     const [betListTab, setBetListTab] = useState<number>(0);
+
+    const currentRoundBets = useMemo(
+      () => placedBets.filter((bet) => String(bet.lobbyId) === String(activeRoomId)),
+      [placedBets, activeRoomId]
+    );
 
     const handleList = (i: number) => {
       setBetListTab(i);
@@ -195,40 +213,73 @@ const History = forwardRef<HTMLDivElement, listProp>(
             historyData={historyData}
             info={info}
             lobbyTab={lobbyTab}
-            placedBets={placedBets.filter((bet) => String(bet.lobbyId) === String(activeRoomId))}
+            placedBets={currentRoundBets}
           />
         )}
 
         {betListTab === 0 && (
-          <div className="bet-table-container current-bets-tab">
-            <div className="current-bets-header">
-              <span>BET TYPE</span>
-              <span>SELECTED NUMBER</span>
-              <span>AMOUNT</span>
+          <div className="cur-bets">
+            <div className="cur-bets-row cur-bets-head">
+              <div className="ccol ccol-type">Bet Type</div>
+              <div className="ccol ccol-number">Selected Number</div>
+              <div className="ccol ccol-amount">Amount</div>
             </div>
-            {placedBets.filter((bet) => String(bet.lobbyId) === String(activeRoomId)).length > 0 ? (
-              placedBets
-                .filter((bet) => String(bet.lobbyId) === String(activeRoomId))
-                .map((bet) => (
-                  <div className="table-row-container" key={bet.id}>
-                    <div className="table-row-body">
-                      <div className="row-one current-bet-type">{bet.type.toUpperCase()} DIGIT</div>
-                      <div className="created-name current-bet-selection">
-                        {(typeof bet.selectedNumbers === "string"
-                          ? bet.selectedNumbers.split("")
-                          : bet.selectedNumbers
-                        ).map((number, index) => (
-                          <span key={`${bet.id}-${index}`}>
-                            {bet.rawLabels?.[index] || String.fromCharCode(65 + index)} = {number}
-                          </span>
-                        ))}
+
+            {currentRoundBets.length > 0 ? (
+              <>
+                <div className="cur-bets-list">
+                  {currentRoundBets.map((bet) => {
+                    const numbers =
+                      typeof bet.selectedNumbers === "string"
+                        ? bet.selectedNumbers.split("")
+                        : bet.selectedNumbers;
+
+                    return (
+                      <div className="cur-bets-row cur-bets-item" key={bet.id}>
+                        <div className="ccol ccol-type">
+                          <span className="cur-bet-badge">{bet.type}</span>
+                        </div>
+                        <div className="ccol ccol-number">
+                          <div className="cur-chip-stack">
+                            {numbers.map((number, index) => {
+                              const label =
+                                bet.rawLabels?.[index] || String.fromCharCode(65 + index);
+                              return (
+                                <span className="cur-chip-pair" key={`${bet.id}-${index}`}>
+                                  <span className="cur-chip-label">{label}</span>
+                                  <span className={`order-chip ${getChipClass(label)}`}>
+                                    {number}
+                                  </span>
+                                </span>
+                              );
+                            })}
+                          </div>
+                        </div>
+                        <div className="ccol ccol-amount">{bet.amount.toFixed(2)}</div>
                       </div>
-                      <div className="row-two current-bet-amount">{bet.amount.toFixed(2)}</div>
-                    </div>
-                  </div>
-                ))
+                    );
+                  })}
+                </div>
+
+                <div className="cur-bets-footer">
+                  <span className="cur-bets-total-label">
+                    Total · {currentRoundBets.length}{" "}
+                    {currentRoundBets.length === 1 ? "bet" : "bets"}
+                  </span>
+                  <span className="cur-bets-total-value">
+                    {currentRoundBets
+                      .reduce((sum, bet) => sum + Number(bet.amount || 0), 0)
+                      .toFixed(2)}
+                  </span>
+                </div>
+              </>
             ) : (
-              <div className="history-empty-state">No bets placed</div>
+              <div className="cur-bets-empty">
+                <span className="cur-bets-empty-title">No bets placed</span>
+                <span className="cur-bets-empty-sub">
+                  Bets you place for this round will show up here.
+                </span>
+              </div>
             )}
           </div>
         )}

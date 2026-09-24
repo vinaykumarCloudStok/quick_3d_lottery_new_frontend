@@ -239,74 +239,197 @@
   background: #fbfcfe;
 }
 
-.current-bets-tab {
+/* ---------- Current Bets tab ---------- */
+
+.cur-bets {
+  /* Header and rows share one template so columns stay locked together */
+  --cur-cols: minmax(0, 0.72fr) minmax(0, 1.95fr) minmax(0, 0.63fr);
+  --cur-gap: 8px;
+  --cur-pad-x: 14px;
+  --cur-line: #eceff5;
+  --cur-muted: #8a93a6;
+  --cur-ink: #1b2439;
+
+  display: flex;
+  flex-direction: column;
+  width: 100%;
   min-height: 250px;
-}
-
-.current-bets-header,
-.current-bets-tab .table-row-body {
-  display: grid;
-  grid-template-columns: 1.05fr 1.7fr 0.75fr;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 14px;
+  background-color: #fff;
+  border: 1px solid var(--cur-line);
+  border-radius: 14px;
+  overflow: hidden;
   box-sizing: border-box;
+  color: var(--cur-ink);
 }
 
-.current-bets-header {
-  color: #7b879c;
-  background: #f6f8fc;
-  border-bottom: 1px solid #e8edf5;
+.cur-bets-row {
+  display: grid;
+  grid-template-columns: var(--cur-cols);
+  align-items: center;
+  gap: var(--cur-gap);
+  padding: 10px var(--cur-pad-x);
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.ccol {
+  min-width: 0;
+}
+
+.ccol-type {
+  text-align: left;
+}
+
+.ccol-number {
+  text-align: left;
+}
+
+.ccol-amount {
+  text-align: right;
+}
+
+.cur-bets-head {
+  background-color: #f5f7fb;
+  border-bottom: 1px solid var(--cur-line);
   font-size: 0.62rem;
   font-weight: 800;
   letter-spacing: 0.07em;
-}
-
-.current-bets-tab .table-row-container {
-  border-bottom: 1px solid #edf0f5;
-}
-
-.current-bets-tab .table-row-body {
-  min-height: 54px;
+  text-transform: uppercase;
+  color: var(--cur-muted);
   padding-top: 9px;
   padding-bottom: 9px;
 }
 
-.current-bet-type {
-  color: #315bd6;
-  font-size: 0.72rem;
-  font-weight: 800;
-}
-
-.current-bet-selection {
+.cur-bets-list {
   display: flex;
-  flex-wrap: wrap;
-  gap: 4px 10px;
-  color: #17233d;
-  font-size: 0.82rem;
-  font-weight: 700;
+  flex-direction: column;
 }
 
-.current-bet-amount {
-  color: #17233d;
+.cur-bets-item {
+  min-height: 52px;
+  border-bottom: 1px solid var(--cur-line);
+}
+
+.cur-bets-item:last-child {
+  border-bottom: none;
+}
+
+.cur-bet-badge {
+  display: inline-block;
+  max-width: 100%;
+  padding: 4px 9px;
+  border-radius: 999px;
+  background-color: #eef4ff;
+  color: #2f5fd0;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-sizing: border-box;
+}
+
+.cur-chip-stack {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+}
+
+.cur-chip-pair {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.cur-chip-label {
+  font-size: 0.64rem;
+  font-weight: 800;
+  color: var(--cur-muted);
+}
+
+.cur-bets-item .ccol-amount {
   font-size: 0.82rem;
   font-weight: 800;
-  text-align: right;
+  color: var(--cur-ink);
+  white-space: nowrap;
+}
+
+.cur-bets-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: auto;
+  padding: 11px var(--cur-pad-x);
+  background-color: #f7f9fd;
+  border-top: 1px solid var(--cur-line);
+  box-sizing: border-box;
+}
+
+.cur-bets-total-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--cur-muted);
+}
+
+.cur-bets-total-value {
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: var(--cur-ink);
+}
+
+.cur-bets-empty {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 28px 20px;
+  text-align: center;
+}
+
+.cur-bets-empty-title {
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: var(--cur-ink);
+}
+
+.cur-bets-empty-sub {
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: var(--cur-muted);
 }
 
 @media (max-width: 480px) {
-  .current-bets-header,
-  .current-bets-tab .table-row-body {
-    grid-template-columns: 0.95fr 1.5fr 0.7fr;
-    gap: 5px;
-    padding-left: 10px;
-    padding-right: 10px;
+  .cur-bets {
+    --cur-cols: minmax(0, 0.7fr) minmax(0, 1.85fr) minmax(0, 0.6fr);
+    --cur-gap: 6px;
+    --cur-pad-x: 10px;
+    border-radius: 12px;
   }
 
-  .current-bet-type,
-  .current-bet-selection,
-  .current-bet-amount {
-    font-size: 0.68rem;
+  .cur-chip-stack {
+    gap: 5px 8px;
+  }
+
+  .cur-bets-item .ccol-amount {
+    font-size: 0.72rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .cur-bets {
+    --cur-cols: minmax(0, 0.66fr) minmax(0, 1.8fr) minmax(0, 0.58fr);
+    --cur-pad-x: 8px;
+  }
+
+  .cur-bet-badge {
+    padding: 3px 7px;
+    font-size: 0.56rem;
   }
 }
 
